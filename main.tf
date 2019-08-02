@@ -3,11 +3,11 @@ locals {
   vpc_id     = data.aws_subnet.selected.vpc_id
 }
 
-data aws_subnet selected {
+data "aws_subnet" "selected" {
   id = local.subnet_ids[0]
 }
 
-resource aws_security_group default {
+resource "aws_security_group" "default" {
   name        = "${var.stack}-aurora"
   description = "Access to Aurora"
   vpc_id      = local.vpc_id
@@ -35,13 +35,13 @@ resource aws_security_group default {
   }
 }
 
-resource aws_db_subnet_group default {
+resource "aws_db_subnet_group" "default" {
   name       = var.stack
   subnet_ids = local.subnet_ids
   tags       = var.tags
 }
 
-resource aws_rds_cluster_parameter_group default {
+resource "aws_rds_cluster_parameter_group" "default" {
   name        = var.stack
   description = "RDS default cluster parameter group"
   family      = "aurora5.6"
@@ -57,7 +57,7 @@ resource aws_rds_cluster_parameter_group default {
   }
 }
 
-resource aws_rds_cluster default {
+resource "aws_rds_cluster" "default" {
   cluster_identifier              = var.stack
   database_name                   = var.database
   master_username                 = var.username
