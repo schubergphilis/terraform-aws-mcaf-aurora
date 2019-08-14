@@ -1,6 +1,6 @@
 locals {
-  cidr_blocks = var.cidr_blocks ? { create = true } : {}
-  security_group_ids = var.security_group_ids ? { create = true } : {}
+  cidr_blocks = var.cidr_blocks != null ? { create = true } : {}
+  security_group_ids = var.security_group_ids != null ? { create = true } : {}
 }
 
 data "aws_subnet" "selected" {
