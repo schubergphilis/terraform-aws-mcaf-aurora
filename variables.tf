@@ -66,11 +66,6 @@ variable "subnet_ids" {
   description = "List of subnet IDs to deploy Aurora in"
 }
 
-variable "security_group_ids" {
-  type        = list(string)
-  description = "List of security group IDs allowed to connect to Aurora"
-}
-
 variable "apply_immediately" {
   type        = bool
   default     = true
