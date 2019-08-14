@@ -1,3 +1,8 @@
+locals {
+  cidr_blocks = var.cidr_blocks ? { create = true } : {}
+  security_group_ids = var.security_group_ids ? { create = true } : {}
+}
+
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -8,13 +13,29 @@ resource "aws_security_group" "default" {
   vpc_id      = data.aws_subnet.selected.vpc_id
   tags        = var.tags
 
-  ingress {
-    description = "All inbound traffic"
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
-    cidr_blocks = var.cidr_blocks
-    self        = true
+  dynamic ingress {
+    for_each = local.cidr_blocks
+
+    content {
+      description = "MySQL ingress"
+      from_port   = 3306
+      to_port     = 3306
+      protocol    = "tcp"
+      cidr_blocks = var.cidr_blocks
+      self        = true
+    }
+  }
+
+  dynamic ingress {
+    for_each = local.security_group_ids
+
+    content {
+      description = "MySQL ingress"
+      from_port   = 3306
+      to_port     = 3306
+      protocol    = "tcp"
+      cidr_blocks = var.security_group_ids
+    }
   }
 
   egress {
