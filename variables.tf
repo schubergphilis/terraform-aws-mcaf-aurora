@@ -45,7 +45,14 @@ variable "iam_roles" {
 
 variable "cidr_blocks" {
   type        = list(string)
+  default     = null
   description = "List of CIDR blocks that should be allowed access to the Aurora cluster"
+}
+
+variable "security_group_ids" {
+  type        = list(string)
+  default     = null
+  description = "List of security group IDs allowed to connect to Aurora"
 }
 
 variable "availability_zones" {
