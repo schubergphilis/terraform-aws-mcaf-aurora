@@ -1,5 +1,5 @@
 locals {
-  cidr_blocks = var.cidr_blocks != null ? { create = true } : {}
+  cidr_blocks        = var.cidr_blocks != null ? { create = true } : {}
   security_group_ids = var.security_group_ids != null ? { create = true } : {}
 }
 
@@ -30,11 +30,11 @@ resource "aws_security_group" "default" {
     for_each = local.security_group_ids
 
     content {
-      description = "MySQL ingress"
-      from_port   = 3306
-      to_port     = 3306
-      protocol    = "tcp"
-      cidr_blocks = var.security_group_ids
+      description     = "MySQL ingress"
+      from_port       = 3306
+      to_port         = 3306
+      protocol        = "tcp"
+      security_groups = var.security_group_ids
     }
   }
 
