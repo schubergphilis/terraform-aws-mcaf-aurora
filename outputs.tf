@@ -5,7 +5,7 @@ output "id" {
 
 output "database" {
   value       = var.database
-  description = "The name of the first database to be created when the cluster is created"
+  description = "Name of the first database created when the cluster was created"
 }
 
 output "username" {
@@ -15,15 +15,15 @@ output "username" {
 
 output "endpoint" {
   value       = aws_rds_cluster.default.endpoint
-  description = "The DNS address of the RDS instance"
-}
-
-output "reader_endpoint" {
-  value       = aws_rds_cluster.default.reader_endpoint
-  description = "A read-only endpoint for the Aurora cluster, automatically load-balanced across replicas"
+  description = "DNS address of the RDS instance"
 }
 
 output "port" {
   value       = aws_rds_cluster.default.port
-  description = "The database port"
+  description = "Port on which the DB accepts connections"
+}
+
+output "reader_endpoint" {
+  value       = aws_rds_cluster.default.reader_endpoint
+  description = "A load-balanced read-only endpoint for the Aurora cluster"
 }
