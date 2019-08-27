@@ -13,42 +13,41 @@ resource "aws_security_group" "default" {
   vpc_id      = data.aws_subnet.selected.vpc_id
   tags        = var.tags
 
-  dynamic ingress {
-    for_each = local.cidr_blocks
-
-    content {
-      description = "MySQL ingress"
-      from_port   = 3306
-      to_port     = 3306
-      protocol    = "tcp"
-      cidr_blocks = var.cidr_blocks
-      self        = true
-    }
-  }
-
-  dynamic ingress {
-    for_each = local.security_group_ids
-
-    content {
-      description     = "MySQL ingress"
-      from_port       = 3306
-      to_port         = 3306
-      protocol        = "tcp"
-      security_groups = var.security_group_ids
-    }
-  }
-
-  egress {
-    description = "All outbound traffic"
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   lifecycle {
     create_before_destroy = true
   }
+}
+
+resource "aws_security_group_rule" "ingress_cidrs" {
+  for_each          = local.cidr_blocks
+  security_group_id = aws_security_group.default.id
+  type              = "ingress"
+  description       = "MySQL ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  cidr_blocks       = var.cidr_blocks
+}
+
+resource "aws_security_group_rule" "ingress_groups" {
+  for_each          = local.security_group_ids
+  security_group_id = aws_security_group.default.id
+  type              = "ingress"
+  description       = "MySQL ingress"
+  from_port         = 3306
+  to_port           = 3306
+  protocol          = "tcp"
+  security_groups   = var.security_group_ids
+}
+
+resource "aws_security_group_rule" "egress" {
+  security_group_id = aws_security_group.default.id
+  type              = "egress"
+  description       = "All outbound traffic"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
 }
 
 resource "aws_db_subnet_group" "default" {
