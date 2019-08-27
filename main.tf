@@ -1,8 +1,3 @@
-locals {
-  cidr_blocks        = var.cidr_blocks != null ? { create = true } : {}
-  security_group_ids = var.security_group_ids != null ? { create = true } : {}
-}
-
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -19,7 +14,7 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group_rule" "ingress_cidrs" {
-  for_each          = local.cidr_blocks
+  count             = var.cidr_blocks != null ? 1 : 0
   security_group_id = aws_security_group.default.id
   type              = "ingress"
   description       = "MySQL ingress"
@@ -30,14 +25,14 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  for_each          = local.security_group_ids
-  security_group_id = aws_security_group.default.id
-  type              = "ingress"
-  description       = "MySQL ingress"
-  from_port         = 3306
-  to_port           = 3306
-  protocol          = "tcp"
-  security_groups   = var.security_group_ids
+  count                    = var.security_group_ids != null ? length(var.security_group_ids) : 0
+  security_group_id        = aws_security_group.default.id
+  type                     = "ingress"
+  description              = "MySQL ingress"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  source_security_group_id = var.security_group_ids[count.index]
 }
 
 resource "aws_security_group_rule" "egress" {
