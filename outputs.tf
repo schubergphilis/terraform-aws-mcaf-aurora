@@ -27,3 +27,8 @@ output "reader_endpoint" {
   value       = aws_rds_cluster.default.reader_endpoint
   description = "A load-balanced read-only endpoint for the Aurora cluster"
 }
+
+output "security_group_id" {
+  value       = aws_security_group.default.id
+  description = "The securitiry group id that is attached to the Aurora cluster"
+}
