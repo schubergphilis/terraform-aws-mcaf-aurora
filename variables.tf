@@ -51,7 +51,7 @@ variable "cidr_blocks" {
 
 variable "security_group_ids" {
   type        = list(string)
-  default     = null
+  default     = []
   description = "List of security group IDs allowed to connect to Aurora"
 }
 

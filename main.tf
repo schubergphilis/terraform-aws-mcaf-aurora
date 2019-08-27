@@ -7,10 +7,6 @@ resource "aws_security_group" "default" {
   description = "Access to Aurora"
   vpc_id      = data.aws_subnet.selected.vpc_id
   tags        = var.tags
-
-  lifecycle {
-    create_before_destroy = true
-  }
 }
 
 resource "aws_security_group_rule" "ingress_cidrs" {
@@ -25,7 +21,7 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  count                    = var.security_group_ids != null ? length(var.security_group_ids) : 0
+  count                    = length(var.security_group_ids)
   security_group_id        = aws_security_group.default.id
   type                     = "ingress"
   description              = "MySQL ingress"
@@ -94,9 +90,5 @@ resource "aws_rds_cluster" "default" {
     max_capacity             = var.max_capacity
     min_capacity             = var.min_capacity
     seconds_until_auto_pause = 1800
-  }
-
-  lifecycle {
-    create_before_destroy = true
   }
 }
