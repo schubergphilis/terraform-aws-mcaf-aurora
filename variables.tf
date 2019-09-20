@@ -9,6 +9,45 @@ variable "database" {
   description = "The name of the first database to be created when the cluster is created"
 }
 
+variable "engine" {
+  type        = string
+  default     = "aurora"
+  description = "The engine type of the Aurora Cluster"
+}
+
+variable "engine_version" {
+  type        = string
+  default     = "5.6.10a"
+  description = "The engine version of the Aurora Cluster, default it is using mysql 5.6"
+}
+
+variable "engine_mode" {
+  type        = string
+  default     = "serverless"
+  description = "The database engine mode"
+}
+
+variable "cluster_family" {
+  type        = string
+  default     = "aurora5.6"
+  description = "The family of the cluster parameters"
+}
+
+variable "cluster_parameters" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = [{
+    name  = "character_set_server",
+    value = "utf8",
+    }, {
+    name  = "character_set_client",
+    value = "utf8",
+  }]
+  description = "The Aurora cluster parameters (default parameters for mysql)"
+}
+
 variable "username" {
   type        = string
   description = "Username for the master DB user"
