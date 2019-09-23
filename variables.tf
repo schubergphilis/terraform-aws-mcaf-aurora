@@ -21,12 +21,6 @@ variable "engine_version" {
   description = "The engine version of the Aurora Cluster, default it is using mysql 5.6"
 }
 
-variable "engine_mode" {
-  type        = string
-  default     = "serverless"
-  description = "The database engine mode"
-}
-
 variable "cluster_family" {
   type        = string
   default     = "aurora5.6"

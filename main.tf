@@ -69,7 +69,7 @@ resource "aws_rds_cluster" "default" {
   master_password                 = var.password
   engine                          = var.engine
   engine_version                  = var.engine_version
-  engine_mode                     = var.engine_mode
+  engine_mode                     = "serverless"
   iam_roles                       = var.iam_roles
   apply_immediately               = var.apply_immediately
   db_subnet_group_name            = aws_db_subnet_group.default.name
