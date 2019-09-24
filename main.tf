@@ -13,9 +13,9 @@ resource "aws_security_group_rule" "ingress_cidrs" {
   count             = var.cidr_blocks != null ? 1 : 0
   security_group_id = aws_security_group.default.id
   type              = "ingress"
-  description       = "MySQL ingress"
-  from_port         = 3306
-  to_port           = 3306
+  description       = "Aurora ingress"
+  from_port         = aws_rds_cluster.default.port
+  to_port           = aws_rds_cluster.default.port
   protocol          = "tcp"
   cidr_blocks       = var.cidr_blocks
 }
@@ -24,9 +24,9 @@ resource "aws_security_group_rule" "ingress_groups" {
   count                    = length(var.security_group_ids)
   security_group_id        = aws_security_group.default.id
   type                     = "ingress"
-  description              = "MySQL ingress"
-  from_port                = 3306
-  to_port                  = 3306
+  description              = "Aurora ingress"
+  from_port                = aws_rds_cluster.default.port
+  to_port                  = aws_rds_cluster.default.port
   protocol                 = "tcp"
   source_security_group_id = var.security_group_ids[count.index]
 }
@@ -50,16 +50,15 @@ resource "aws_db_subnet_group" "default" {
 resource "aws_rds_cluster_parameter_group" "default" {
   name        = var.stack
   description = "RDS default cluster parameter group"
-  family      = "aurora5.6"
+  family      = var.cluster_family
 
-  parameter {
-    name  = "character_set_server"
-    value = "utf8"
-  }
+  dynamic "parameter" {
+    for_each = var.cluster_parameters
 
-  parameter {
-    name  = "character_set_client"
-    value = "utf8"
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
   }
 }
 
@@ -68,8 +67,8 @@ resource "aws_rds_cluster" "default" {
   database_name                   = var.database
   master_username                 = var.username
   master_password                 = var.password
-  engine                          = "aurora"
-  engine_version                  = "5.6.10a"
+  engine                          = var.engine
+  engine_version                  = var.engine_version
   engine_mode                     = "serverless"
   iam_roles                       = var.iam_roles
   apply_immediately               = var.apply_immediately

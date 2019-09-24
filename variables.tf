@@ -9,6 +9,39 @@ variable "database" {
   description = "The name of the first database to be created when the cluster is created"
 }
 
+variable "engine" {
+  type        = string
+  default     = "aurora"
+  description = "The engine type of the Aurora cluster"
+}
+
+variable "engine_version" {
+  type        = string
+  default     = "5.6.10a"
+  description = "The engine version of the Aurora cluster"
+}
+
+variable "cluster_family" {
+  type        = string
+  default     = "aurora5.6"
+  description = "The family of the DB cluster parameter group"
+}
+
+variable "cluster_parameters" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = [{
+    name  = "character_set_server",
+    value = "utf8",
+    }, {
+    name  = "character_set_client",
+    value = "utf8",
+  }]
+  description = "A list of DB parameters to apply"
+}
+
 variable "username" {
   type        = string
   description = "Username for the master DB user"
