@@ -12,19 +12,19 @@ variable "database" {
 variable "engine" {
   type        = string
   default     = "aurora"
-  description = "The engine type of the Aurora Cluster"
+  description = "The engine type of the Aurora cluster"
 }
 
 variable "engine_version" {
   type        = string
   default     = "5.6.10a"
-  description = "The engine version of the Aurora Cluster, default it is using mysql 5.6"
+  description = "The engine version of the Aurora cluster"
 }
 
 variable "cluster_family" {
   type        = string
   default     = "aurora5.6"
-  description = "The family of the cluster parameters"
+  description = "The family of the DB cluster parameter group"
 }
 
 variable "cluster_parameters" {
@@ -39,7 +39,7 @@ variable "cluster_parameters" {
     name  = "character_set_client",
     value = "utf8",
   }]
-  description = "The Aurora cluster parameters (default parameters for mysql)"
+  description = "A list of DB parameters to apply"
 }
 
 variable "username" {

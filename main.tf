@@ -13,7 +13,7 @@ resource "aws_security_group_rule" "ingress_cidrs" {
   count             = var.cidr_blocks != null ? 1 : 0
   security_group_id = aws_security_group.default.id
   type              = "ingress"
-  description       = "Aurora ingress (engine: ${var.engine})"
+  description       = "Aurora ingress"
   from_port         = aws_rds_cluster.default.port
   to_port           = aws_rds_cluster.default.port
   protocol          = "tcp"
@@ -24,7 +24,7 @@ resource "aws_security_group_rule" "ingress_groups" {
   count                    = length(var.security_group_ids)
   security_group_id        = aws_security_group.default.id
   type                     = "ingress"
-  description              = "Aurora ingress (engine: ${var.engine})"
+  description              = "Aurora ingress"
   from_port                = aws_rds_cluster.default.port
   to_port                  = aws_rds_cluster.default.port
   protocol                 = "tcp"
