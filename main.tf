@@ -51,6 +51,7 @@ resource "aws_rds_cluster_parameter_group" "default" {
   name        = var.stack
   description = "RDS default cluster parameter group"
   family      = var.cluster_family
+  tags        = var.tags
 
   dynamic "parameter" {
     for_each = var.cluster_parameters
