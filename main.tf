@@ -64,18 +64,19 @@ resource "aws_rds_cluster_parameter_group" "default" {
 }
 
 resource "aws_rds_cluster" "default" {
-  cluster_identifier              = var.stack
-  database_name                   = var.database
-  master_username                 = var.username
-  master_password                 = var.password
-  engine                          = var.engine
-  engine_version                  = var.engine_version
-  engine_mode                     = "serverless"
-  iam_roles                       = var.iam_roles
-  apply_immediately               = var.apply_immediately
-  db_subnet_group_name            = aws_db_subnet_group.default.name
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.default.name
-  deletion_protection             = var.deletion_protection
+  cluster_identifier                  = var.stack
+  database_name                       = var.database
+  master_username                     = var.username
+  master_password                     = var.password
+  engine                              = var.engine
+  engine_version                      = var.engine_version
+  engine_mode                         = "serverless"
+  iam_database_authentication_enabled = var.iam_auth_enabled
+  iam_roles                           = var.iam_roles
+  apply_immediately                   = var.apply_immediately
+  db_subnet_group_name                = aws_db_subnet_group.default.name
+  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
+  deletion_protection                 = var.deletion_protection
   # This can only be enabled once the provider is updated
   # enable_data_api                 = var.enable_data_api
   final_snapshot_identifier = var.final_snapshot_identifier

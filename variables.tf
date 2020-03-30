@@ -70,6 +70,12 @@ variable "min_capacity" {
   description = "The minimum capacity of the serverless cluster"
 }
 
+variable "iam_auth_enabled" {
+  type        = bool
+  default     = false
+  description = "Specifies whether or mappings of AWS Identity and Access Management (IAM) accounts to database accounts is enabled"
+}
+
 variable "iam_roles" {
   type        = list(string)
   default     = null
