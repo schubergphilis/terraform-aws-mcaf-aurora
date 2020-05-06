@@ -64,31 +64,33 @@ resource "aws_rds_cluster_parameter_group" "default" {
 }
 
 resource "aws_rds_cluster" "default" {
-  cluster_identifier              = var.stack
-  database_name                   = var.database
-  master_username                 = var.username
-  master_password                 = var.password
-  engine                          = var.engine
-  engine_version                  = var.engine_version
-  engine_mode                     = "serverless"
-  iam_roles                       = var.iam_roles
-  apply_immediately               = var.apply_immediately
-  db_subnet_group_name            = aws_db_subnet_group.default.name
-  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.default.name
-  deletion_protection             = var.deletion_protection
-  # This can only be enabled once the provider is updated
-  # enable_data_api                 = var.enable_data_api
-  final_snapshot_identifier = var.final_snapshot_identifier
-  skip_final_snapshot       = var.skip_final_snapshot
-  storage_encrypted         = var.storage_encrypted
-  kms_key_id                = var.kms_key_id
-  vpc_security_group_ids    = [aws_security_group.default.id]
-  tags                      = var.tags
+  cluster_identifier                  = var.stack
+  database_name                       = var.database
+  master_username                     = var.username
+  master_password                     = var.password
+  engine                              = var.engine
+  engine_version                      = var.engine_version
+  engine_mode                         = var.engine_mode
+  iam_database_authentication_enabled = var.iam_database_authentication_enabled
+  iam_roles                           = var.iam_roles
+  apply_immediately                   = var.apply_immediately
+  db_subnet_group_name                = aws_db_subnet_group.default.name
+  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
+  deletion_protection                 = var.deletion_protection
+  final_snapshot_identifier           = var.final_snapshot_identifier
+  skip_final_snapshot                 = var.skip_final_snapshot
+  storage_encrypted                   = var.storage_encrypted
+  kms_key_id                          = var.kms_key_id
+  vpc_security_group_ids              = [aws_security_group.default.id]
+  tags                                = var.tags
 
-  scaling_configuration {
-    auto_pause               = var.auto_pause
-    max_capacity             = var.max_capacity
-    min_capacity             = var.min_capacity
-    seconds_until_auto_pause = 1800
+  dynamic scaling_configuration {
+    for_each = var.engine_mode == "serverless" ? { create : null } : {}
+    content {
+      auto_pause               = var.auto_pause
+      max_capacity             = var.max_capacity
+      min_capacity             = var.min_capacity
+      seconds_until_auto_pause = 1800
+    }
   }
 }

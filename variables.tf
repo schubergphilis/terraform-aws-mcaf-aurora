@@ -21,6 +21,12 @@ variable "engine_version" {
   description = "The engine version of the Aurora cluster"
 }
 
+variable "engine_mode" {
+  type        = string
+  default     = "serverless"
+  description = "The engine mode of the Aurora cluster"
+}
+
 variable "cluster_family" {
   type        = string
   default     = "aurora5.6"
@@ -68,6 +74,12 @@ variable "min_capacity" {
   type        = string
   default     = 1
   description = "The minimum capacity of the serverless cluster"
+}
+
+variable "iam_database_authentication_enabled" {
+  type        = bool
+  default     = null
+  description = "Specify if mapping AWS IAM accounts to database accounts is enabled."
 }
 
 variable "iam_roles" {
@@ -121,12 +133,6 @@ variable "deletion_protection" {
   type        = bool
   default     = true
   description = "A boolean indicating if the DB instance should have deletion protection enable"
-}
-
-variable "enable_data_api" {
-  type        = bool
-  default     = false
-  description = "Whether or not to enable the data API"
 }
 
 variable "skip_final_snapshot" {
