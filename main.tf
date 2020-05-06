@@ -96,8 +96,13 @@ resource "aws_rds_cluster" "default" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count              = var.engine_mode == "serverless" ? 0 : var.instance_count
-  cluster_identifier = aws_rds_cluster.default.id
-  identifier         = "${var.stack}-${count.index}"
-  instance_class     = var.instance_class
+  count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
+  apply_immediately               = var.apply_immediately
+  cluster_identifier              = aws_rds_cluster.default.id
+  db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.default.name
+  db_subnet_group_name            = aws_db_subnet_group.default.name
+  engine                          = var.engine
+  engine_version                  = var.engine_version
+  identifier                      = "${var.stack}-${count.index}"
+  instance_class                  = var.instance_class
 }
