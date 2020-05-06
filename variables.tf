@@ -88,6 +88,18 @@ variable "iam_roles" {
   description = "A list of IAM Role ARNs to associate with the cluster"
 }
 
+variable "instance_class" {
+  type        = string
+  default     = "db.r5.large"
+  description = "The class of RDS instances to attach. Only for serverless engine_mode"
+}
+
+variable "instance_count" {
+  type        = number
+  default     = 1
+  description = "The number of RDS instances to attach. Only for serverless engine_mode"
+}
+
 variable "cidr_blocks" {
   type        = list(string)
   default     = null
