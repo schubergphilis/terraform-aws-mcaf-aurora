@@ -94,3 +94,10 @@ resource "aws_rds_cluster" "default" {
     }
   }
 }
+
+resource "aws_rds_cluster_instance" "cluster_instances" {
+  count              = var.engine_mode == "serverless" ? 0 : var.instance_count
+  cluster_identifier = aws_rds_cluster.default.id
+  identifier         = "${var.stack}-${count.index}"
+  instance_class     = var.instance_class
+}
