@@ -74,6 +74,7 @@ resource "aws_rds_cluster" "default" {
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   iam_roles                           = var.iam_roles
   apply_immediately                   = var.apply_immediately
+  backup_retention_period             = var.backup_retention_period
   db_subnet_group_name                = aws_db_subnet_group.default.name
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
   deletion_protection                 = var.deletion_protection

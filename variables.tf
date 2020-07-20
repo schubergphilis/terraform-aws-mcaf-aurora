@@ -3,28 +3,34 @@ variable "stack" {
   description = "The stack name for the Aurora Cluster"
 }
 
-variable "database" {
-  type        = string
+variable "apply_immediately" {
+  type        = bool
+  default     = true
+  description = "Specifies whether any cluster modifications are applied immediately"
+}
+
+variable "auto_pause" {
+  type        = bool
+  default     = true
+  description = "Whether to enable automatic pause"
+}
+
+variable "availability_zones" {
+  type        = list(string)
+  default     = []
+  description = "List of availability zones to deploy Aurora in"
+}
+
+variable "backup_retention_period" {
+  type        = number
+  default     = 1
+  description = "The days to retain backups for"
+}
+
+variable "cidr_blocks" {
+  type        = list(string)
   default     = null
-  description = "The name of the first database to be created when the cluster is created"
-}
-
-variable "engine" {
-  type        = string
-  default     = "aurora"
-  description = "The engine type of the Aurora cluster"
-}
-
-variable "engine_version" {
-  type        = string
-  default     = "5.6.10a"
-  description = "The engine version of the Aurora cluster"
-}
-
-variable "engine_mode" {
-  type        = string
-  default     = "serverless"
-  description = "The engine mode of the Aurora cluster"
+  description = "List of CIDR blocks that should be allowed access to the Aurora cluster"
 }
 
 variable "cluster_family" {
@@ -48,32 +54,40 @@ variable "cluster_parameters" {
   description = "A list of DB parameters to apply"
 }
 
-variable "username" {
+variable "database" {
   type        = string
-  description = "Username for the master DB user"
+  default     = null
+  description = "The name of the first database to be created when the cluster is created"
 }
 
-variable "password" {
-  type        = string
-  description = "Password for the master DB user"
-}
-
-variable "auto_pause" {
+variable "deletion_protection" {
   type        = bool
   default     = true
-  description = "Whether to enable automatic pause"
+  description = "A boolean indicating if the DB instance should have deletion protection enable"
 }
 
-variable "max_capacity" {
+variable "engine" {
   type        = string
-  default     = 8
-  description = "The maximum capacity of the serverless cluster"
+  default     = "aurora"
+  description = "The engine type of the Aurora cluster"
 }
 
-variable "min_capacity" {
+variable "engine_mode" {
   type        = string
-  default     = 1
-  description = "The minimum capacity of the serverless cluster"
+  default     = "serverless"
+  description = "The engine mode of the Aurora cluster"
+}
+
+variable "engine_version" {
+  type        = string
+  default     = "5.6.10a"
+  description = "The engine version of the Aurora cluster"
+}
+
+variable "final_snapshot_identifier" {
+  type        = string
+  default     = null
+  description = "Identifier of the final snapshot to create before deleting the cluster"
 }
 
 variable "iam_database_authentication_enabled" {
@@ -100,10 +114,27 @@ variable "instance_count" {
   description = "The number of RDS instances to attach. Only for serverless engine_mode"
 }
 
-variable "cidr_blocks" {
-  type        = list(string)
+variable "kms_key_id" {
+  type        = string
   default     = null
-  description = "List of CIDR blocks that should be allowed access to the Aurora cluster"
+  description = "The KMS key ID used for the storage encryption"
+}
+
+variable "max_capacity" {
+  type        = string
+  default     = 8
+  description = "The maximum capacity of the serverless cluster"
+}
+
+variable "min_capacity" {
+  type        = string
+  default     = 1
+  description = "The minimum capacity of the serverless cluster"
+}
+
+variable "password" {
+  type        = string
+  description = "Password for the master DB user"
 }
 
 variable "security_group_ids" {
@@ -112,21 +143,10 @@ variable "security_group_ids" {
   description = "List of security group IDs allowed to connect to Aurora"
 }
 
-variable "availability_zones" {
-  type        = list(string)
-  default     = []
-  description = "List of availability zones to deploy Aurora in"
-}
-
-variable "subnet_ids" {
-  type        = list(string)
-  description = "List of subnet IDs to deploy Aurora in"
-}
-
-variable "apply_immediately" {
+variable "skip_final_snapshot" {
   type        = bool
-  default     = true
-  description = "Specifies whether any cluster modifications are applied immediately"
+  default     = false
+  description = "Determines whether a final snapshot is created before deleting the cluster"
 }
 
 variable "storage_encrypted" {
@@ -135,28 +155,14 @@ variable "storage_encrypted" {
   description = "Specifies whether the DB cluster is encrypted"
 }
 
-variable "kms_key_id" {
+variable "subnet_ids" {
+  type        = list(string)
+  description = "List of subnet IDs to deploy Aurora in"
+}
+
+variable "username" {
   type        = string
-  default     = null
-  description = "The KMS key ID used for the storage encryption"
-}
-
-variable "deletion_protection" {
-  type        = bool
-  default     = true
-  description = "A boolean indicating if the DB instance should have deletion protection enable"
-}
-
-variable "skip_final_snapshot" {
-  type        = bool
-  default     = false
-  description = "Determines whether a final snapshot is created before deleting the cluster"
-}
-
-variable "final_snapshot_identifier" {
-  type        = string
-  default     = null
-  description = "Identifier of the final snapshot to create before deleting the cluster"
+  description = "Username for the master DB user"
 }
 
 variable "tags" {
