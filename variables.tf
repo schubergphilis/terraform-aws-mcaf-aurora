@@ -66,6 +66,12 @@ variable "deletion_protection" {
   description = "A boolean indicating if the DB instance should have deletion protection enable"
 }
 
+variable "enable_http_endpoint" {
+  type        = bool
+  default     = false
+  description = "Enable Aurora Serverless HTTP endpoint (Data API)"
+}
+
 variable "engine" {
   type        = string
   default     = "aurora"

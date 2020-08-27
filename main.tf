@@ -68,6 +68,7 @@ resource "aws_rds_cluster" "default" {
   database_name                       = var.database
   master_username                     = var.username
   master_password                     = var.password
+  enable_http_endpoint                = var.enable_http_endpoint
   engine                              = var.engine
   engine_version                      = var.engine_version
   engine_mode                         = var.engine_mode
