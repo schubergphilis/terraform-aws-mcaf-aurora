@@ -143,6 +143,12 @@ variable "password" {
   description = "Password for the master DB user"
 }
 
+variable "publicly_accessible" {
+  type        = string
+  default     = false
+  description = "Control if instances in cluster are publicly accessible"
+}
+
 variable "security_group_ids" {
   type        = list(string)
   default     = []
