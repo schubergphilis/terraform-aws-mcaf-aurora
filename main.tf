@@ -106,4 +106,5 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   engine_version       = var.engine_version
   identifier           = "${var.stack}-${count.index}"
   instance_class       = var.instance_class
+  publicly_accessible  = var.publicly_accessible
 }
