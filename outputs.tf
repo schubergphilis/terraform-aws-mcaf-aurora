@@ -3,6 +3,11 @@ output "id" {
   description = "ID of the Aurora cluster"
 }
 
+output "arn" {
+  value       = aws_rds_cluster.default.arn
+  description = "ARN of the Aurora cluster"
+}
+
 output "database" {
   value       = var.database
   description = "Name of the first database created when the cluster was created"
