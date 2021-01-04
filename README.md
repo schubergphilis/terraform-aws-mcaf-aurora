@@ -60,4 +60,5 @@
 | reader\_endpoint | A load-balanced read-only endpoint for the Aurora cluster |
 | security\_group\_id | The securitiry group id that is attached to the Aurora cluster |
 | username | Username for the master DB user |
+
 <!--- END_TF_DOCS --->
