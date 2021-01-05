@@ -31,16 +31,6 @@ resource "aws_security_group_rule" "ingress_groups" {
   source_security_group_id = var.security_group_ids[count.index]
 }
 
-resource "aws_security_group_rule" "egress" {
-  security_group_id = aws_security_group.default.id
-  type              = "egress"
-  description       = "All outbound traffic"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-}
-
 resource "aws_db_subnet_group" "default" {
   name       = var.stack
   subnet_ids = var.subnet_ids
@@ -86,7 +76,7 @@ resource "aws_rds_cluster" "default" {
   vpc_security_group_ids              = [aws_security_group.default.id]
   tags                                = var.tags
 
-  dynamic scaling_configuration {
+  dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
     content {
       auto_pause               = var.auto_pause
