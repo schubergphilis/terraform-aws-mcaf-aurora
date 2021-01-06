@@ -53,6 +53,22 @@ resource "aws_rds_cluster_parameter_group" "default" {
   }
 }
 
+resource "aws_rds_database_parameter_group" "default" {
+  name        = var.stack
+  description = "RDS default database parameter group"
+  family      = var.cluster_family
+  tags        = var.tags
+
+  dynamic "parameter" {
+    for_each = var.database_parameters
+
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
+}
+
 resource "aws_rds_cluster" "default" {
   cluster_identifier                  = var.stack
   database_name                       = var.database
@@ -75,6 +91,7 @@ resource "aws_rds_cluster" "default" {
   kms_key_id                          = var.kms_key_id
   vpc_security_group_ids              = [aws_security_group.default.id]
   tags                                = var.tags
+  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
@@ -88,13 +105,17 @@ resource "aws_rds_cluster" "default" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count                = var.engine_mode == "serverless" ? 0 : var.instance_count
-  apply_immediately    = var.apply_immediately
-  cluster_identifier   = aws_rds_cluster.default.id
-  db_subnet_group_name = aws_db_subnet_group.default.name
-  engine               = var.engine
-  engine_version       = var.engine_version
-  identifier           = "${var.stack}-${count.index}"
-  instance_class       = var.instance_class
-  publicly_accessible  = var.publicly_accessible
+  count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
+  apply_immediately               = var.apply_immediately
+  cluster_identifier              = aws_rds_cluster.default.id
+  db_subnet_group_name            = aws_db_subnet_group.default.name
+  engine                          = var.engine
+  engine_version                  = var.engine_version
+  identifier                      = "${var.stack}-${count.index}"
+  instance_class                  = var.instance_class
+  publicly_accessible             = var.publicly_accessible
+  db_parameter_group_name         = ws_rds_database_parameter_group.default.name
+  performance_insights_enabled    = var.performance_insights
+  performance_insights_kms_key_id = var.performance_insights_kms_key_id
+  monitoring_interval             = var.monitoring_interval
 }

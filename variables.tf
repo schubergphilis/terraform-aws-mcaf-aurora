@@ -51,7 +51,7 @@ variable "cluster_parameters" {
     name  = "character_set_client",
     value = "utf8",
   }]
-  description = "A list of DB parameters to apply"
+  description = "A list of cluster DB parameters to apply"
 }
 
 variable "database" {
@@ -60,10 +60,25 @@ variable "database" {
   description = "The name of the first database to be created when the cluster is created"
 }
 
+variable "database_parameters" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = null
+  description = "A list of instance DB parameters to apply"
+}
+
 variable "deletion_protection" {
   type        = bool
   default     = true
   description = "A boolean indicating if the DB instance should have deletion protection enable"
+}
+
+variable "enabled_cloudwatch_logs_exports" {
+  description = "List of log types to export to cloudwatch"
+  type        = list(string)
+  default     = []
 }
 
 variable "enable_http_endpoint" {
@@ -138,9 +153,27 @@ variable "min_capacity" {
   description = "The minimum capacity of the serverless cluster"
 }
 
+variable "monitoring_interval" {
+  description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
+  type        = number
+  default     = 0
+}
+
 variable "password" {
   type        = string
   description = "Password for the master DB user"
+}
+
+variable "performance_insights" {
+  description = "Specifies whether Performance Insights is enabled or not."
+  type        = bool
+  default     = false
+}
+
+variable "performance_insights_kms_key_id" {
+  description = "The ARN for the KMS key to encrypt Performance Insights data."
+  type        = string
+  default     = ""
 }
 
 variable "publicly_accessible" {
