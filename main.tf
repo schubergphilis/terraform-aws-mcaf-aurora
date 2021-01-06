@@ -1,3 +1,14 @@
+
+data "aws_iam_policy_document" "monitoring_rds_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
+}
+
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -37,6 +48,18 @@ resource "aws_db_subnet_group" "default" {
   tags       = var.tags
 }
 
+resource "aws_iam_role" "rds_enhanced_monitoring" {
+  count              = var.monitoring_interval != null ? 1 : 0
+  name               = "RoleRDSEnhancedMonitoring"
+  assume_role_policy = data.aws_iam_policy_document.monitoring_rds_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
+  count      = var.monitoring_interval != null ? 1 : 0
+  role       = aws_iam_role.rds_enhanced_monitoring[0].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+}
+
 resource "aws_rds_cluster_parameter_group" "default" {
   name        = var.stack
   description = "RDS default cluster parameter group"
@@ -53,28 +76,45 @@ resource "aws_rds_cluster_parameter_group" "default" {
   }
 }
 
+resource "aws_db_parameter_group" "default" {
+  name        = var.stack
+  description = "RDS default database parameter group"
+  family      = var.cluster_family
+  tags        = var.tags
+
+  dynamic "parameter" {
+    for_each = var.database_parameters
+
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
+}
+
 resource "aws_rds_cluster" "default" {
-  cluster_identifier                  = var.stack
-  database_name                       = var.database
-  master_username                     = var.username
-  master_password                     = var.password
-  enable_http_endpoint                = var.enable_http_endpoint
-  engine                              = var.engine
-  engine_version                      = var.engine_version
-  engine_mode                         = var.engine_mode
-  iam_database_authentication_enabled = var.iam_database_authentication_enabled
-  iam_roles                           = var.iam_roles
   apply_immediately                   = var.apply_immediately
   backup_retention_period             = var.backup_retention_period
-  db_subnet_group_name                = aws_db_subnet_group.default.name
+  cluster_identifier                  = var.stack
+  database_name                       = var.database
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
+  db_subnet_group_name                = aws_db_subnet_group.default.name
   deletion_protection                 = var.deletion_protection
+  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
+  enable_http_endpoint                = var.enable_http_endpoint
+  engine                              = var.engine
+  engine_mode                         = var.engine_mode
+  engine_version                      = var.engine_version
   final_snapshot_identifier           = var.final_snapshot_identifier
+  iam_database_authentication_enabled = var.iam_database_authentication_enabled
+  iam_roles                           = var.iam_roles
+  kms_key_id                          = var.kms_key_id
+  master_password                     = var.password
+  master_username                     = var.username
   skip_final_snapshot                 = var.skip_final_snapshot
   storage_encrypted                   = var.storage_encrypted
-  kms_key_id                          = var.kms_key_id
-  vpc_security_group_ids              = [aws_security_group.default.id]
   tags                                = var.tags
+  vpc_security_group_ids              = [aws_security_group.default.id]
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
@@ -88,13 +128,18 @@ resource "aws_rds_cluster" "default" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count                = var.engine_mode == "serverless" ? 0 : var.instance_count
-  apply_immediately    = var.apply_immediately
-  cluster_identifier   = aws_rds_cluster.default.id
-  db_subnet_group_name = aws_db_subnet_group.default.name
-  engine               = var.engine
-  engine_version       = var.engine_version
-  identifier           = "${var.stack}-${count.index}"
-  instance_class       = var.instance_class
-  publicly_accessible  = var.publicly_accessible
+  count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
+  apply_immediately               = var.apply_immediately
+  cluster_identifier              = aws_rds_cluster.default.id
+  db_parameter_group_name         = aws_db_parameter_group.default.name
+  db_subnet_group_name            = aws_db_subnet_group.default.name
+  engine                          = var.engine
+  engine_version                  = var.engine_version
+  identifier                      = "${var.stack}-${count.index}"
+  instance_class                  = var.instance_class
+  monitoring_interval             = var.monitoring_interval
+  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring[0].arn
+  performance_insights_enabled    = var.performance_insights
+  performance_insights_kms_key_id = var.kms_key_id
+  publicly_accessible             = var.publicly_accessible
 }
