@@ -65,7 +65,13 @@ variable "database_parameters" {
     name  = string
     value = string
   }))
-  default = null
+  default = [{
+    name  = "character_set_server",
+    value = "utf8",
+    }, {
+    name  = "character_set_client",
+    value = "utf8",
+  }]
   description = "A list of instance DB parameters to apply"
 }
 
