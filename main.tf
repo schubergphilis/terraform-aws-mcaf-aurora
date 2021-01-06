@@ -114,7 +114,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   identifier                      = "${var.stack}-${count.index}"
   instance_class                  = var.instance_class
   publicly_accessible             = var.publicly_accessible
-  db_parameter_group_name         = ws_rds_database_parameter_group.default.name
+  db_parameter_group_name         = aws_rds_database_parameter_group.default.name
   performance_insights_enabled    = var.performance_insights
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
   monitoring_interval             = var.monitoring_interval
