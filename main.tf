@@ -53,6 +53,21 @@ resource "aws_rds_cluster_parameter_group" "default" {
   }
 }
 
+resource "aws_rds_db_parameter_group" "default" {
+  name        = var.stack
+  description = "RDS default database parameter group"
+  family      = var.cluster_family
+  tags        = var.tags
+
+  dynamic "parameter" {
+    for_each = var.database_parameters
+
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
+}
 
 resource "aws_rds_cluster" "default" {
   cluster_identifier                  = var.stack
@@ -85,22 +100,6 @@ resource "aws_rds_cluster" "default" {
       max_capacity             = var.max_capacity
       min_capacity             = var.min_capacity
       seconds_until_auto_pause = 1800
-    }
-  }
-}
-
-resource "aws_rds_db_parameter_group" "default" {
-  name        = var.stack
-  description = "RDS default database parameter group"
-  family      = var.cluster_family
-  tags        = var.tags
-
-  dynamic "parameter" {
-    for_each = var.database_parameters
-
-    content {
-      name  = parameter.value.name
-      value = parameter.value.value
     }
   }
 }
