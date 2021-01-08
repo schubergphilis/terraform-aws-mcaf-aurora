@@ -1,3 +1,8 @@
+locals {
+  rds_enhanced_monitoring_arn  = var.create_monitoring_role ? join("", aws_iam_role.rds_enhanced_monitoring.*.arn) : var.monitoring_role_arn
+  rds_enhanced_monitoring_name = join("", aws_iam_role.rds_enhanced_monitoring.*.name)
+}
+
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -134,7 +139,7 @@ data "aws_iam_policy_document" "monitoring_rds_assume_role" {
 }
 
 resource "aws_iam_role" "rds_enhanced_monitoring" {
-  count = var.create_cluster && var.create_monitoring_role && var.monitoring_interval > 0 ? 1 : 0
+  count =  var.create_monitoring_role && var.monitoring_interval > 0 ? 1 : 0
 
   name               = "rds-enhanced-monitoring-${var.name}"
   assume_role_policy = data.aws_iam_policy_document.monitoring_rds_assume_role.json

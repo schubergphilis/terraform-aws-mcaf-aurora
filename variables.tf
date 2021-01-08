@@ -54,6 +54,12 @@ variable "cluster_parameters" {
   description = "A list of cluster DB parameters to apply"
 }
 
+variable "create_cluster" {
+  description = "Controls if RDS cluster should be created (it affects almost all resources)"
+  type        = bool
+  default     = true
+}
+
 variable "database" {
   type        = string
   default     = null
