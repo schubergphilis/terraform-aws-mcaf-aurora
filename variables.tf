@@ -54,12 +54,6 @@ variable "cluster_parameters" {
   description = "A list of cluster DB parameters to apply"
 }
 
-variable "create_cluster" {
-  description = "Controls if RDS cluster should be created (it affects almost all resources)"
-  type        = bool
-  default     = true
-}
-
 variable "database" {
   type        = string
   default     = null
@@ -163,18 +157,6 @@ variable "monitoring_interval" {
   description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
   type        = number
   default     = 0
-}
-
-variable "monitoring_role_arn" {
-  description = "IAM role for RDS to send enhanced monitoring metrics to CloudWatch"
-  type        = string
-  default     = ""
-}
-
-variable "create_monitoring_role" {
-  description = "Whether to create the IAM role for RDS enhanced monitoring"
-  type        = bool
-  default     = true
 }
 
 variable "password" {
