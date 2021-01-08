@@ -159,6 +159,18 @@ variable "monitoring_interval" {
   default     = 0
 }
 
+variable "monitoring_role_arn" {
+  description = "IAM role for RDS to send enhanced monitoring metrics to CloudWatch"
+  type        = string
+  default     = ""
+}
+
+variable "create_monitoring_role" {
+  description = "Whether to create the IAM role for RDS enhanced monitoring"
+  type        = bool
+  default     = true
+}
+
 variable "password" {
   type        = string
   description = "Password for the master DB user"
