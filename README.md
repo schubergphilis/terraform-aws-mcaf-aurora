@@ -30,7 +30,7 @@
 | cluster\_family | The family of the DB cluster parameter group | `string` | `"aurora5.6"` | no |
 | cluster\_parameters | A list of cluster DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
 | database | The name of the first database to be created when the cluster is created | `string` | `null` | no |
-| database\_parameters | A list of instance DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
+| database\_parameters | A list of instance DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `null` | no |
 | deletion\_protection | A boolean indicating if the DB instance should have deletion protection enable | `bool` | `true` | no |
 | enabled\_cloudwatch\_logs\_exports | List of log types to export to cloudwatch | `list(string)` | `[]` | no |
 | enable\_http\_endpoint | Enable Aurora Serverless HTTP endpoint (Data API) | `bool` | `false` | no |
