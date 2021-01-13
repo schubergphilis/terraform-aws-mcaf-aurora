@@ -1,3 +1,13 @@
+data "aws_iam_policy_document" "monitoring_rds_assume_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
+}
+
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -35,6 +45,18 @@ resource "aws_db_subnet_group" "default" {
   name       = var.stack
   subnet_ids = var.subnet_ids
   tags       = var.tags
+}
+
+resource "aws_iam_role" "rds_enhanced_monitoring" {
+  count              = var.monitoring_interval > 0 ? 1 : 0
+  name               = "RoleRDSEnhancedMonitoring"
+  assume_role_policy = data.aws_iam_policy_document.monitoring_rds_assume_role.json
+}
+
+resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
+  count      = var.monitoring_interval > 0 ? 1 : 0
+  role       = aws_iam_role.rds_enhanced_monitoring.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
 resource "aws_rds_cluster_parameter_group" "default" {
@@ -115,7 +137,10 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   identifier                      = "${var.stack}-${count.index}"
   instance_class                  = var.instance_class
   monitoring_interval             = var.monitoring_interval
+  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring.arn
   performance_insights_enabled    = var.performance_insights
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
   publicly_accessible             = var.publicly_accessible
 }
+
+
