@@ -70,28 +70,28 @@ resource "aws_db_parameter_group" "default" {
 }
 
 resource "aws_rds_cluster" "default" {
-  cluster_identifier                  = var.stack
-  database_name                       = var.database
-  master_username                     = var.username
-  master_password                     = var.password
-  enable_http_endpoint                = var.enable_http_endpoint
-  engine                              = var.engine
-  engine_version                      = var.engine_version
-  engine_mode                         = var.engine_mode
-  iam_database_authentication_enabled = var.iam_database_authentication_enabled
-  iam_roles                           = var.iam_roles
   apply_immediately                   = var.apply_immediately
   backup_retention_period             = var.backup_retention_period
-  db_subnet_group_name                = aws_db_subnet_group.default.name
+  cluster_identifier                  = var.stack
+  database_name                       = var.database
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
+  db_subnet_group_name                = aws_db_subnet_group.default.name
   deletion_protection                 = var.deletion_protection
+  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
+  enable_http_endpoint                = var.enable_http_endpoint
+  engine                              = var.engine
+  engine_mode                         = var.engine_mode
+  engine_version                      = var.engine_version
   final_snapshot_identifier           = var.final_snapshot_identifier
+  iam_database_authentication_enabled = var.iam_database_authentication_enabled
+  iam_roles                           = var.iam_roles
+  kms_key_id                          = var.kms_key_id
+  master_password                     = var.password
+  master_username                     = var.username
   skip_final_snapshot                 = var.skip_final_snapshot
   storage_encrypted                   = var.storage_encrypted
-  kms_key_id                          = var.kms_key_id
-  vpc_security_group_ids              = [aws_security_group.default.id]
   tags                                = var.tags
-  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
+  vpc_security_group_ids              = [aws_security_group.default.id]
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
@@ -108,14 +108,14 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
   apply_immediately               = var.apply_immediately
   cluster_identifier              = aws_rds_cluster.default.id
+  db_parameter_group_name         = aws_db_parameter_group.default.name
   db_subnet_group_name            = aws_db_subnet_group.default.name
   engine                          = var.engine
   engine_version                  = var.engine_version
   identifier                      = "${var.stack}-${count.index}"
   instance_class                  = var.instance_class
-  publicly_accessible             = var.publicly_accessible
-  db_parameter_group_name         = aws_db_parameter_group.default.name
+  monitoring_interval             = var.monitoring_interval
   performance_insights_enabled    = var.performance_insights
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
-  monitoring_interval             = var.monitoring_interval
+  publicly_accessible             = var.publicly_accessible
 }
