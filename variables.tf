@@ -155,7 +155,7 @@ variable "min_capacity" {
 
 variable "monitoring_interval" {
   description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
-  type        = number
+  type        = string
   default     = 0
 }
 

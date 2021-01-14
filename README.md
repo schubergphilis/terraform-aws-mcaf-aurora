@@ -44,7 +44,7 @@
 | instance\_count | The number of RDS instances to attach. Only for serverless engine\_mode | `number` | `1` | no |
 | kms\_key\_id | The KMS key ID used for the storage encryption | `string` | `null` | no |
 | max\_capacity | The maximum capacity of the serverless cluster | `string` | `8` | no |
-| monitoring\_interval | The interval (seconds) between points when Enhanced Monitoring metrics are collected | `number` | `0` | no |
+| monitoring\_interval | The interval (seconds) between points when Enhanced Monitoring metrics are collected | `string` | `0` | no |
 | min\_capacity | The minimum capacity of the serverless cluster | `string` | `1` | no |
 | performance\_insights\_enabled | Specifies whether Performance Insights is enabled or not | `bool` | `false` | no |
 | performance\_insights\_kms\_key\_id | The ARN for the KMS key to encrypt Performance Insights data | `string` | `null` | no |
