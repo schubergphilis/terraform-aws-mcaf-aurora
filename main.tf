@@ -1,8 +1,3 @@
-locals {
-
-  rds_enhanced_monitoring_name = join("", aws_iam_role.rds_enhanced_monitoring.*.name)
-
-}
 
 data "aws_iam_policy_document" "monitoring_rds_assume_role" {
   statement {
@@ -61,7 +56,7 @@ resource "aws_iam_role" "rds_enhanced_monitoring" {
 
 resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
   count      = var.monitoring_interval != null ? 1 : 0
-  role       = aws_iam_role.rds_enhanced_monitoring.name[1]
+  role       = aws_iam_role.rds_enhanced_monitoring[1].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
