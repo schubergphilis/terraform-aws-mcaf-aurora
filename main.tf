@@ -56,7 +56,7 @@ resource "aws_iam_role" "rds_enhanced_monitoring" {
 
 resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
   count      = var.monitoring_interval != null ? 1 : 0
-  role       = aws_iam_role.rds_enhanced_monitoring[1].name
+  role       = aws_iam_role.rds_enhanced_monitoring[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
@@ -138,7 +138,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   identifier                      = "${var.stack}-${count.index}"
   instance_class                  = var.instance_class
   monitoring_interval             = var.monitoring_interval
-  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring[1].arn
+  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring[0].arn
   performance_insights_enabled    = var.performance_insights
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
   publicly_accessible             = var.publicly_accessible
