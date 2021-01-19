@@ -143,5 +143,3 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   performance_insights_kms_key_id = var.performance_insights_kms_key_id
   publicly_accessible             = var.publicly_accessible
 }
-
-
