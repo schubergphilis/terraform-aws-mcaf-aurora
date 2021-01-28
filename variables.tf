@@ -1,8 +1,3 @@
-variable "stack" {
-  type        = string
-  description = "The stack name for the Aurora Cluster"
-}
-
 variable "apply_immediately" {
   type        = bool
   default     = true
@@ -76,9 +71,9 @@ variable "deletion_protection" {
 }
 
 variable "enabled_cloudwatch_logs_exports" {
-  description = "List of log types to export to cloudwatch"
   type        = list(string)
   default     = []
+  description = "List of log types to export to cloudwatch"
 }
 
 variable "enable_http_endpoint" {
@@ -154,9 +149,9 @@ variable "min_capacity" {
 }
 
 variable "monitoring_interval" {
-  description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
   type        = string
   default     = null
+  description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
 }
 
 variable "password" {
@@ -165,15 +160,15 @@ variable "password" {
 }
 
 variable "performance_insights" {
-  description = "Specifies whether Performance Insights is enabled or not"
   type        = bool
   default     = false
+  description = "Specifies whether Performance Insights is enabled or not"
 }
 
 variable "permissions_boundary" {
-  description = "The ARN of the policy that is used to set the permissions boundary for the role."
   type        = string
   default     = null
+  description = "The ARN of the policy that is used to set the permissions boundary for the role"
 }
 
 variable "publicly_accessible" {
@@ -194,6 +189,11 @@ variable "skip_final_snapshot" {
   description = "Determines whether a final snapshot is created before deleting the cluster"
 }
 
+variable "stack" {
+  type        = string
+  description = "The stack name for the Aurora Cluster"
+}
+
 variable "storage_encrypted" {
   type        = bool
   default     = true
@@ -205,12 +205,12 @@ variable "subnet_ids" {
   description = "List of subnet IDs to deploy Aurora in"
 }
 
-variable "username" {
-  type        = string
-  description = "Username for the master DB user"
-}
-
 variable "tags" {
   type        = map(string)
   description = "A mapping of tags to assign to the bucket"
+}
+
+variable "username" {
+  type        = string
+  description = "Username for the master DB user"
 }

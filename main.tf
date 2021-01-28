@@ -77,6 +77,7 @@ resource "aws_rds_cluster_parameter_group" "default" {
 }
 
 resource "aws_db_parameter_group" "default" {
+  count       = var.database_parameters != null ? 1 : 0
   name        = var.stack
   description = "RDS default database parameter group"
   family      = var.cluster_family
@@ -131,7 +132,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
   apply_immediately               = var.apply_immediately
   cluster_identifier              = aws_rds_cluster.default.id
-  db_parameter_group_name         = aws_db_parameter_group.default.name
+  db_parameter_group_name         = aws_db_parameter_group.default[0].name
   db_subnet_group_name            = aws_db_subnet_group.default.name
   engine                          = var.engine
   engine_version                  = var.engine_version
