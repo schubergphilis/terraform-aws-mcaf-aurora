@@ -1,14 +1,3 @@
-
-data "aws_iam_policy_document" "monitoring_rds_assume_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
-    principals {
-      type        = "Service"
-      identifiers = ["monitoring.rds.amazonaws.com"]
-    }
-  }
-}
-
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -48,18 +37,6 @@ resource "aws_db_subnet_group" "default" {
   tags       = var.tags
 }
 
-resource "aws_iam_role" "rds_enhanced_monitoring" {
-  count              = var.monitoring_interval != null ? 1 : 0
-  name               = "RoleRDSEnhancedMonitoring"
-  assume_role_policy = data.aws_iam_policy_document.monitoring_rds_assume_role.json
-}
-
-resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
-  count      = var.monitoring_interval != null ? 1 : 0
-  role       = aws_iam_role.rds_enhanced_monitoring[0].name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-}
-
 resource "aws_rds_cluster_parameter_group" "default" {
   name        = var.stack
   description = "RDS default cluster parameter group"
@@ -68,23 +45,6 @@ resource "aws_rds_cluster_parameter_group" "default" {
 
   dynamic "parameter" {
     for_each = var.cluster_parameters
-
-    content {
-      name  = parameter.value.name
-      value = parameter.value.value
-    }
-  }
-}
-
-resource "aws_db_parameter_group" "default" {
-  count       = var.database_parameters != null ? 1 : 0
-  name        = var.stack
-  description = "RDS default database parameter group"
-  family      = var.cluster_family
-  tags        = var.tags
-
-  dynamic "parameter" {
-    for_each = var.database_parameters
 
     content {
       name  = parameter.value.name
@@ -128,18 +88,46 @@ resource "aws_rds_cluster" "default" {
   }
 }
 
+resource "aws_db_parameter_group" "default" {
+  count       = var.database_parameters != null ? 1 : 0
+  name        = var.stack
+  description = "RDS default database parameter group"
+  family      = var.cluster_family
+  tags        = var.tags
+
+  dynamic "parameter" {
+    for_each = var.database_parameters
+
+    content {
+      name  = parameter.value.name
+      value = parameter.value.value
+    }
+  }
+}
+
+module "rds_enhanced_monitoring_role" {
+  count                 = var.monitoring_interval != null ? 1 : 0
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-role?ref=v0.3.0"
+  name                  = "RDSEnhancedMonitoringRole-${var.stack}"
+  principal_type        = "Service"
+  principal_identifiers = ["monitoring.rds.amazonaws.com"]
+  policy_arns           = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
+  postfix               = false
+  tags                  = var.tags
+}
+
 resource "aws_rds_cluster_instance" "cluster_instances" {
   count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
   apply_immediately               = var.apply_immediately
   cluster_identifier              = aws_rds_cluster.default.id
-  db_parameter_group_name         = aws_db_parameter_group.default[0].name
+  db_parameter_group_name         = try(aws_db_parameter_group.default[0].name, null)
   db_subnet_group_name            = aws_db_subnet_group.default.name
   engine                          = var.engine
   engine_version                  = var.engine_version
   identifier                      = "${var.stack}-${count.index}"
   instance_class                  = var.instance_class
   monitoring_interval             = var.monitoring_interval
-  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring[0].arn
+  monitoring_role_arn             = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled    = var.performance_insights
   performance_insights_kms_key_id = var.kms_key_id
   publicly_accessible             = var.publicly_accessible

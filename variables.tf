@@ -72,7 +72,7 @@ variable "deletion_protection" {
 
 variable "enabled_cloudwatch_logs_exports" {
   type        = list(string)
-  default     = []
+  default     = null
   description = "List of log types to export to cloudwatch"
 }
 
@@ -151,7 +151,7 @@ variable "min_capacity" {
 variable "monitoring_interval" {
   type        = string
   default     = null
-  description = "The interval (seconds) between points when Enhanced Monitoring metrics are collected"
+  description = "The interval (seconds) for collecting enhanced monitoring metrics"
 }
 
 variable "password" {
