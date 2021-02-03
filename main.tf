@@ -90,7 +90,7 @@ resource "aws_rds_cluster" "default" {
 
 resource "aws_db_parameter_group" "default" {
   count       = var.database_parameters != null ? 1 : 0
-  name        = var.stack
+  name        = "${var.stack}-aurora"
   description = "RDS default database parameter group"
   family      = var.cluster_family
   tags        = var.tags
