@@ -1,8 +1,3 @@
-variable "stack" {
-  type        = string
-  description = "The stack name for the Aurora Cluster"
-}
-
 variable "apply_immediately" {
   type        = bool
   default     = true
@@ -51,7 +46,7 @@ variable "cluster_parameters" {
     name  = "character_set_client",
     value = "utf8",
   }]
-  description = "A list of DB parameters to apply"
+  description = "A list of cluster DB parameters to apply"
 }
 
 variable "database" {
@@ -60,10 +55,25 @@ variable "database" {
   description = "The name of the first database to be created when the cluster is created"
 }
 
+variable "database_parameters" {
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default     = null
+  description = "A list of instance DB parameters to apply"
+}
+
 variable "deletion_protection" {
   type        = bool
   default     = true
   description = "A boolean indicating if the DB instance should have deletion protection enable"
+}
+
+variable "enabled_cloudwatch_logs_exports" {
+  type        = list(string)
+  default     = null
+  description = "List of log types to export to cloudwatch"
 }
 
 variable "enable_http_endpoint" {
@@ -138,9 +148,27 @@ variable "min_capacity" {
   description = "The minimum capacity of the serverless cluster"
 }
 
+variable "monitoring_interval" {
+  type        = string
+  default     = null
+  description = "The interval (seconds) for collecting enhanced monitoring metrics"
+}
+
 variable "password" {
   type        = string
   description = "Password for the master DB user"
+}
+
+variable "performance_insights" {
+  type        = bool
+  default     = false
+  description = "Specifies whether Performance Insights is enabled or not"
+}
+
+variable "permissions_boundary" {
+  type        = string
+  default     = null
+  description = "The ARN of the policy that is used to set the permissions boundary for the role"
 }
 
 variable "publicly_accessible" {
@@ -161,6 +189,11 @@ variable "skip_final_snapshot" {
   description = "Determines whether a final snapshot is created before deleting the cluster"
 }
 
+variable "stack" {
+  type        = string
+  description = "The stack name for the Aurora Cluster"
+}
+
 variable "storage_encrypted" {
   type        = bool
   default     = true
@@ -172,12 +205,12 @@ variable "subnet_ids" {
   description = "List of subnet IDs to deploy Aurora in"
 }
 
-variable "username" {
-  type        = string
-  description = "Username for the master DB user"
-}
-
 variable "tags" {
   type        = map(string)
   description = "A mapping of tags to assign to the bucket"
+}
+
+variable "username" {
+  type        = string
+  description = "Username for the master DB user"
 }
