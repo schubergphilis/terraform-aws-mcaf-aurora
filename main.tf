@@ -73,6 +73,7 @@ resource "aws_rds_cluster" "default" {
   master_password                     = var.password
   master_username                     = var.username
   skip_final_snapshot                 = var.skip_final_snapshot
+  snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted
   tags                                = var.tags
   vpc_security_group_ids              = [aws_security_group.default.id]
