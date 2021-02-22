@@ -191,7 +191,7 @@ variable "skip_final_snapshot" {
 
 variable "snapshot_identifier" {
   type        = string
-  default     = ""
+  default     = null
   description = "DB snapshot to create this database from"
 }
 
