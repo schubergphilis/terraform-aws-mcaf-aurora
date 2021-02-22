@@ -189,6 +189,12 @@ variable "skip_final_snapshot" {
   description = "Determines whether a final snapshot is created before deleting the cluster"
 }
 
+variable "snapshot_identifier" {
+  type        = string
+  default     = ""
+  description = "DB snapshot to create this database from"
+}
+
 variable "stack" {
   type        = string
   description = "The stack name for the Aurora Cluster"
