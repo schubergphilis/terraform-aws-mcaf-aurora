@@ -192,7 +192,7 @@ variable "skip_final_snapshot" {
 variable "snapshot_identifier" {
   type        = string
   default     = null
-  description = "DB snapshot to create this database from"
+  description = "Database snapshot identifier to create the database from"
 }
 
 variable "stack" {
