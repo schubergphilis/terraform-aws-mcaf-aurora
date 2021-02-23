@@ -73,7 +73,8 @@ resource "aws_rds_cluster" "default" {
   master_password                     = var.password
   master_username                     = var.username
   skip_final_snapshot                 = var.skip_final_snapshot
-  storage_encrypted                   = var.storage_encrypted
+  snapshot_identifier                 = var.snapshot_identifier
+  storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
   tags                                = var.tags
   vpc_security_group_ids              = [aws_security_group.default.id]
 
