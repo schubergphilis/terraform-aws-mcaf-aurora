@@ -69,12 +69,12 @@ resource "aws_rds_cluster" "default" {
   final_snapshot_identifier           = var.final_snapshot_identifier
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   iam_roles                           = var.iam_roles
-  kms_key_id                          = var.kms_key_id #tfsec:ignore:AWS051
+  kms_key_id                          = var.kms_key_id
   master_password                     = var.password
   master_username                     = var.username
   skip_final_snapshot                 = var.skip_final_snapshot
   snapshot_identifier                 = var.snapshot_identifier
-  storage_encrypted                   = var.storage_encrypted
+  storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
   tags                                = var.tags
   vpc_security_group_ids              = [aws_security_group.default.id]
 
