@@ -165,6 +165,12 @@ variable "performance_insights" {
   description = "Specifies whether Performance Insights is enabled or not"
 }
 
+variable "performance_insights_kms_key_id" {
+  type        = string
+  default     = ""
+  description = "The KMS key ID used for the PI encryption"
+}
+
 variable "permissions_boundary" {
   type        = string
   default     = null

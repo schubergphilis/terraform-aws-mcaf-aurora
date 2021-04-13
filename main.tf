@@ -130,6 +130,6 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   monitoring_interval             = var.monitoring_interval
   monitoring_role_arn             = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled    = var.performance_insights
-  performance_insights_kms_key_id = var.kms_key_id
+  performance_insights_kms_key_id = var.performance_insights_kms_key_id
   publicly_accessible             = var.publicly_accessible
 }
