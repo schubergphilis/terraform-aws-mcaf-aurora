@@ -25,7 +25,7 @@
 | apply\_immediately | Specifies whether any cluster modifications are applied immediately | `bool` | `true` | no |
 | auto\_pause | Whether to enable automatic pause | `bool` | `true` | no |
 | availability\_zones | List of availability zones to deploy Aurora in | `list(string)` | `[]` | no |
-| backup\_retention\_period | The days to retain backups for | `number` | `1` | no |
+| backup\_retention\_period | The days to retain backups for | `number` | `7` | no |
 | cidr\_blocks | List of CIDR blocks that should be allowed access to the Aurora cluster | `list(string)` | `null` | no |
 | cluster\_family | The family of the DB cluster parameter group | `string` | `"aurora5.6"` | no |
 | cluster\_parameters | A list of cluster DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
