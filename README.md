@@ -32,8 +32,8 @@
 | database | The name of the first database to be created when the cluster is created | `string` | `null` | no |
 | database\_parameters | A list of instance DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `null` | no |
 | deletion\_protection | A boolean indicating if the DB instance should have deletion protection enable | `bool` | `true` | no |
-| enabled\_cloudwatch\_logs\_exports | List of log types to export to cloudwatch | `list(string)` | `[]` | no |
 | enable\_http\_endpoint | Enable Aurora Serverless HTTP endpoint (Data API) | `bool` | `false` | no |
+| enabled\_cloudwatch\_logs\_exports | List of log types to export to cloudwatch | `list(string)` | `null` | no |
 | engine | The engine type of the Aurora cluster | `string` | `"aurora"` | no |
 | engine\_mode | The engine mode of the Aurora cluster | `string` | `"serverless"` | no |
 | engine\_version | The engine version of the Aurora cluster | `string` | `"5.6.10a"` | no |
@@ -44,12 +44,14 @@
 | instance\_count | The number of RDS instances to attach. Only for serverless engine\_mode | `number` | `1` | no |
 | kms\_key\_id | The KMS key ID used for the storage encryption | `string` | `null` | no |
 | max\_capacity | The maximum capacity of the serverless cluster | `string` | `8` | no |
-| monitoring\_interval | The interval (seconds) for collecting enhanced monitoring metrics | `string` | `0` | no |
 | min\_capacity | The minimum capacity of the serverless cluster | `string` | `1` | no |
-| performance\_insights\_enabled | Specifies whether Performance Insights is enabled or not | `bool` | `false` | no |
+| monitoring\_interval | The interval (seconds) for collecting enhanced monitoring metrics | `string` | `null` | no |
+| performance\_insights | Specifies whether Performance Insights is enabled or not | `bool` | `false` | no |
+| permissions\_boundary | The ARN of the policy that is used to set the permissions boundary for the role | `string` | `null` | no |
 | publicly\_accessible | Control if instances in cluster are publicly accessible | `string` | `false` | no |
 | security\_group\_ids | List of security group IDs allowed to connect to Aurora | `list(string)` | `[]` | no |
 | skip\_final\_snapshot | Determines whether a final snapshot is created before deleting the cluster | `bool` | `false` | no |
+| snapshot\_identifier | Database snapshot identifier to create the database from | `string` | `null` | no |
 | storage\_encrypted | Specifies whether the DB cluster is encrypted | `bool` | `true` | no |
 
 ## Outputs
