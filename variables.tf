@@ -18,7 +18,7 @@ variable "availability_zones" {
 
 variable "backup_retention_period" {
   type        = number
-  default     = 1
+  default     = 7
   description = "The days to retain backups for"
 }
 
