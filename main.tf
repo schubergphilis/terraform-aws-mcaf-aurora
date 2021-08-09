@@ -57,6 +57,7 @@ resource "aws_rds_cluster" "default" {
   apply_immediately                   = var.apply_immediately
   backup_retention_period             = var.backup_retention_period
   cluster_identifier                  = var.stack
+  copy_tags_to_snapshot               = true
   database_name                       = var.database
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
   db_subnet_group_name                = aws_db_subnet_group.default.name
