@@ -48,6 +48,8 @@
 | monitoring\_interval | The interval (seconds) for collecting enhanced monitoring metrics | `string` | `null` | no |
 | performance\_insights | Specifies whether Performance Insights is enabled or not | `bool` | `false` | no |
 | permissions\_boundary | The ARN of the policy that is used to set the permissions boundary for the role | `string` | `null` | no |
+| preferred\_backup\_window | The daily time range during which automated backups are created, in UTC e.g. 04:00-09:00 | `string` | `null` | no |
+| preferred\_maintenance\_window | The weekly time range during which system maintenance can occur, in UTC e.g. wed:04:00-wed:04:30 | `string` | `null` | no |
 | publicly\_accessible | Control if instances in cluster are publicly accessible | `string` | `false` | no |
 | security\_group\_ids | List of security group IDs allowed to connect to Aurora | `list(string)` | `[]` | no |
 | skip\_final\_snapshot | Determines whether a final snapshot is created before deleting the cluster | `bool` | `false` | no |
@@ -59,6 +61,7 @@
 | Name | Description |
 |------|-------------|
 | arn | ARN of the Aurora cluster |
+| cluster\_resource\_id | The RDS Cluster Resource ID |
 | database | Name of the first database created when the cluster was created |
 | endpoint | DNS address of the RDS instance |
 | id | ID of the Aurora cluster |
