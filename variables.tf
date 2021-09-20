@@ -171,6 +171,17 @@ variable "permissions_boundary" {
   description = "The ARN of the policy that is used to set the permissions boundary for the role"
 }
 
+variable "preferred_backup_window" {
+  type        = string
+  default     = null
+  description = "The daily time range during which automated backups are created, in UTC e.g. 04:00-09:00"
+}
+
+variable "preferred_maintenance_window" {
+  type        = string
+  default     = null
+  description = "The weekly time range during which system maintenance can occur, in UTC e.g. wed:04:00-wed:04:30"
+}
 variable "publicly_accessible" {
   type        = string
   default     = false
