@@ -1,8 +1,3 @@
-output "id" {
-  value       = aws_rds_cluster.default.id
-  description = "ID of the Aurora cluster"
-}
-
 output "arn" {
   value       = aws_rds_cluster.default.arn
   description = "ARN of the Aurora cluster"
@@ -13,19 +8,24 @@ output "cluster_resource_id" {
   description = "The RDS Cluster Resource ID"
 }
 
+output "cluster_identifier" {
+  value       = aws_rds_cluster.default.cluster_identifier
+  description = "The RDS Cluster Identifier"
+}
+
 output "database" {
   value       = var.database
   description = "Name of the first database created when the cluster was created"
 }
 
-output "username" {
-  value       = var.username
-  description = "Username for the master DB user"
-}
-
 output "endpoint" {
   value       = aws_rds_cluster.default.endpoint
   description = "DNS address of the RDS instance"
+}
+
+output "id" {
+  value       = aws_rds_cluster.default.id
+  description = "ID of the Aurora cluster"
 }
 
 output "port" {
@@ -41,4 +41,9 @@ output "reader_endpoint" {
 output "security_group_id" {
   value       = aws_security_group.default.id
   description = "The securitiry group id that is attached to the Aurora cluster"
+}
+
+output "username" {
+  value       = var.username
+  description = "Username for the master DB user"
 }

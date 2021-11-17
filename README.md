@@ -61,6 +61,7 @@
 | Name | Description |
 |------|-------------|
 | arn | ARN of the Aurora cluster |
+| cluster\_identifier | The RDS Cluster Identifier |
 | cluster\_resource\_id | The RDS Cluster Resource ID |
 | database | Name of the first database created when the cluster was created |
 | endpoint | DNS address of the RDS instance |
