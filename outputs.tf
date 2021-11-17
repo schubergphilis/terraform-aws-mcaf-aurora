@@ -3,14 +3,14 @@ output "arn" {
   description = "ARN of the Aurora cluster"
 }
 
-output "cluster_resource_id" {
-  value       = aws_rds_cluster.default.cluster_resource_id
-  description = "The RDS Cluster Resource ID"
-}
-
 output "cluster_identifier" {
   value       = aws_rds_cluster.default.cluster_identifier
   description = "The RDS Cluster Identifier"
+}
+
+output "cluster_resource_id" {
+  value       = aws_rds_cluster.default.cluster_resource_id
+  description = "The RDS Cluster Resource ID"
 }
 
 output "database" {
