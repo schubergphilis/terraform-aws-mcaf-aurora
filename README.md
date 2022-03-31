@@ -66,6 +66,7 @@
 | database | Name of the first database created when the cluster was created |
 | endpoint | DNS address of the RDS instance |
 | id | ID of the Aurora cluster |
+| instance\_ids | ID's of RDS Aurora instances |
 | port | Port on which the DB accepts connections |
 | reader\_endpoint | A load-balanced read-only endpoint for the Aurora cluster |
 | security\_group\_id | The securitiry group id that is attached to the Aurora cluster |
