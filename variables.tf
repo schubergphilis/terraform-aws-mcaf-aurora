@@ -165,6 +165,12 @@ variable "performance_insights" {
   description = "Specifies whether Performance Insights is enabled or not"
 }
 
+variable "performance_insights_retention_period" {
+  type        = number
+  default     = 7
+  description = "Amount of time in days to retain Performance Insights data. Valida values are 7, 731 (2 years) or a multiple of 31. When specifying performance_insights_retention_period, performance_insights needs to be set to true"
+}
+
 variable "permissions_boundary" {
   type        = string
   default     = null
