@@ -47,6 +47,7 @@
 | min\_capacity | The minimum capacity of the serverless cluster | `string` | `1` | no |
 | monitoring\_interval | The interval (seconds) for collecting enhanced monitoring metrics | `string` | `null` | no |
 | performance\_insights | Specifies whether Performance Insights is enabled or not | `bool` | `false` | no |
+| performance\_insights\_retention\_period | Amount of time in days to retain Performance Insights data. Valida values are 7, 731 (2 years) or a multiple of 31. When specifying performance\_insights\_retention\_period, performance\_insights needs to be set to true | `number` | `7` | no |
 | permissions\_boundary | The ARN of the policy that is used to set the permissions boundary for the role | `string` | `null` | no |
 | preferred\_backup\_window | The daily time range during which automated backups are created, in UTC e.g. 04:00-09:00 | `string` | `null` | no |
 | preferred\_maintenance\_window | The weekly time range during which system maintenance can occur, in UTC e.g. wed:04:00-wed:04:30 | `string` | `null` | no |

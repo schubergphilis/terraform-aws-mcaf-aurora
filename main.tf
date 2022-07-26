@@ -111,7 +111,7 @@ resource "aws_db_parameter_group" "default" {
 
 module "rds_enhanced_monitoring_role" {
   count                 = var.monitoring_interval != null ? 1 : 0
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-role?ref=v0.3.0"
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-role?ref=v0.3.2"
   name                  = "RDSEnhancedMonitoringRole-${var.stack}"
   principal_type        = "Service"
   principal_identifiers = ["monitoring.rds.amazonaws.com"]
@@ -121,18 +121,20 @@ module "rds_enhanced_monitoring_role" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count                           = var.engine_mode == "serverless" ? 0 : var.instance_count
-  apply_immediately               = var.apply_immediately
-  cluster_identifier              = aws_rds_cluster.default.id
-  db_parameter_group_name         = try(aws_db_parameter_group.default[0].name, null)
-  db_subnet_group_name            = aws_db_subnet_group.default.name
-  engine                          = var.engine
-  engine_version                  = var.engine_version
-  identifier                      = "${var.stack}-${count.index}"
-  instance_class                  = var.instance_class
-  monitoring_interval             = var.monitoring_interval
-  monitoring_role_arn             = try(module.rds_enhanced_monitoring_role[0].arn, null)
-  performance_insights_enabled    = var.performance_insights
-  performance_insights_kms_key_id = var.performance_insights ? var.kms_key_id : null
-  publicly_accessible             = var.publicly_accessible
+  count                                 = var.engine_mode == "serverless" ? 0 : var.instance_count
+  apply_immediately                     = var.apply_immediately
+  cluster_identifier                    = aws_rds_cluster.default.id
+  copy_tags_to_snapshot                 = true
+  db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
+  db_subnet_group_name                  = aws_db_subnet_group.default.name
+  engine                                = var.engine
+  engine_version                        = var.engine_version
+  identifier                            = "${var.stack}-${count.index}"
+  instance_class                        = var.instance_class
+  monitoring_interval                   = var.monitoring_interval
+  monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
+  performance_insights_enabled          = var.performance_insights
+  performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
+  performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
+  publicly_accessible                   = var.publicly_accessible
 }
