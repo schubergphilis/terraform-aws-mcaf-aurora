@@ -137,4 +137,5 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
   publicly_accessible                   = var.publicly_accessible
+  tags                                  = var.tags
 }
