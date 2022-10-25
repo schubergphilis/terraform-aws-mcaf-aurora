@@ -29,8 +29,8 @@ output "id" {
 }
 
 output "instance_ids" {
-  value       = aws_rds_cluster_instance.cluster_instances[*].id
-  description = "ID's of RDS Aurora instances"
+  value       = concat(aws_rds_cluster_instance.first[*].id, aws_rds_cluster_instance.rest[*].id)
+  description = "IDs of RDS Aurora instances"
 }
 
 output "port" {
