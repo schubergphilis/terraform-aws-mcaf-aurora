@@ -30,7 +30,7 @@ variable "cidr_blocks" {
 
 variable "cluster_family" {
   type        = string
-  default     = "aurora5.6"
+  default     = "aurora-mysql5.7"
   description = "The family of the DB cluster parameter group"
 }
 
@@ -84,7 +84,7 @@ variable "enable_http_endpoint" {
 
 variable "engine" {
   type        = string
-  default     = "aurora"
+  default     = "aurora-mysql"
   description = "The engine type of the Aurora cluster"
 }
 
@@ -92,11 +92,16 @@ variable "engine_mode" {
   type        = string
   default     = "serverless"
   description = "The engine mode of the Aurora cluster"
+
+  validation {
+    condition     = contains(["provisioned", "serverless", "parallelquery", "global", "multimaster", "serverlessv2"], var.engine_mode)
+    error_message = "Allowed values for engine_mode are \"provisioned\", \"serverless\", \"parallelquery\", \"global\", \"multimaster\" or \"serverlessv2\"."
+  }
 }
 
 variable "engine_version" {
   type        = string
-  default     = "5.6.10a"
+  default     = "5.7.mysql_aurora.2.08.3"
   description = "The engine version of the Aurora cluster"
 }
 
@@ -188,6 +193,7 @@ variable "preferred_maintenance_window" {
   default     = null
   description = "The weekly time range during which system maintenance can occur, in UTC e.g. wed:04:00-wed:04:30"
 }
+
 variable "publicly_accessible" {
   type        = string
   default     = false
