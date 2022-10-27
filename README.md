@@ -6,12 +6,13 @@
 | Name | Version |
 |------|---------|
 | terraform | >= 0.13 |
+| aws | >= 4.12.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | n/a |
+| aws | >= 4.12.0 |
 
 ## Inputs
 
@@ -27,16 +28,16 @@
 | availability\_zones | List of availability zones to deploy Aurora in | `list(string)` | `[]` | no |
 | backup\_retention\_period | The days to retain backups for | `number` | `7` | no |
 | cidr\_blocks | List of CIDR blocks that should be allowed access to the Aurora cluster | `list(string)` | `null` | no |
-| cluster\_family | The family of the DB cluster parameter group | `string` | `"aurora5.6"` | no |
+| cluster\_family | The family of the DB cluster parameter group | `string` | `"aurora-mysql5.7"` | no |
 | cluster\_parameters | A list of cluster DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
 | database | The name of the first database to be created when the cluster is created | `string` | `null` | no |
 | database\_parameters | A list of instance DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `null` | no |
 | deletion\_protection | A boolean indicating if the DB instance should have deletion protection enable | `bool` | `true` | no |
 | enable\_http\_endpoint | Enable Aurora Serverless HTTP endpoint (Data API) | `bool` | `false` | no |
 | enabled\_cloudwatch\_logs\_exports | List of log types to export to cloudwatch | `list(string)` | `null` | no |
-| engine | The engine type of the Aurora cluster | `string` | `"aurora"` | no |
+| engine | The engine type of the Aurora cluster | `string` | `"aurora-mysql"` | no |
 | engine\_mode | The engine mode of the Aurora cluster | `string` | `"serverless"` | no |
-| engine\_version | The engine version of the Aurora cluster | `string` | `"5.6.10a"` | no |
+| engine\_version | The engine version of the Aurora cluster | `string` | `"5.7.mysql_aurora.2.08.3"` | no |
 | final\_snapshot\_identifier | Identifier of the final snapshot to create before deleting the cluster | `string` | `null` | no |
 | iam\_database\_authentication\_enabled | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `null` | no |
 | iam\_roles | A list of IAM Role ARNs to associate with the cluster | `list(string)` | `null` | no |

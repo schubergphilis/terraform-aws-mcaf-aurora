@@ -65,7 +65,7 @@ resource "aws_rds_cluster" "default" {
   enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
   enable_http_endpoint                = var.enable_http_endpoint
   engine                              = var.engine
-  engine_mode                         = var.engine_mode
+  engine_mode                         = var.engine_mode == "serverlessv2" ? "provisioned" : var.engine_mode
   engine_version                      = var.engine_version
   final_snapshot_identifier           = var.final_snapshot_identifier
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
@@ -90,6 +90,15 @@ resource "aws_rds_cluster" "default" {
       seconds_until_auto_pause = 1800
     }
   }
+
+  dynamic "serverlessv2_scaling_configuration" {
+    for_each = var.engine_mode == "serverlessv2" ? { create : null } : {}
+    content {
+      max_capacity = var.max_capacity
+      min_capacity = var.min_capacity
+    }
+  }
+
 }
 
 resource "aws_db_parameter_group" "default" {
@@ -130,7 +139,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   engine                                = var.engine
   engine_version                        = var.engine_version
   identifier                            = "${var.stack}-${count.index}"
-  instance_class                        = var.instance_class
+  instance_class                        = var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
