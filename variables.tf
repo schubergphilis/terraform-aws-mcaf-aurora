@@ -36,8 +36,9 @@ variable "cluster_family" {
 
 variable "cluster_parameters" {
   type = list(object({
-    name  = string
-    value = string
+    apply_method = optional(string, "immediate")
+    name         = string
+    value        = string
   }))
   default = [{
     name  = "character_set_server",
@@ -57,8 +58,9 @@ variable "database" {
 
 variable "database_parameters" {
   type = list(object({
-    name  = string
-    value = string
+    apply_method = optional(string, "immediate")
+    name         = string
+    value        = string
   }))
   default     = null
   description = "A list of instance DB parameters to apply"
