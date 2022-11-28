@@ -5,7 +5,7 @@
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.13 |
+| terraform | >= 1.3 |
 | aws | >= 4.12.0 |
 
 ## Providers
@@ -29,9 +29,9 @@
 | backup\_retention\_period | The days to retain backups for | `number` | `7` | no |
 | cidr\_blocks | List of CIDR blocks that should be allowed access to the Aurora cluster | `list(string)` | `null` | no |
 | cluster\_family | The family of the DB cluster parameter group | `string` | `"aurora-mysql5.7"` | no |
-| cluster\_parameters | A list of cluster DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
+| cluster\_parameters | A list of cluster DB parameters to apply | <pre>list(object({<br>    apply_method = optional(string, "immediate")<br>    name         = string<br>    value        = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
 | database | The name of the first database to be created when the cluster is created | `string` | `null` | no |
-| database\_parameters | A list of instance DB parameters to apply | <pre>list(object({<br>    name  = string<br>    value = string<br>  }))</pre> | `null` | no |
+| database\_parameters | A list of instance DB parameters to apply | <pre>list(object({<br>    apply_method = optional(string, "immediate")<br>    name         = string<br>    value        = string<br>  }))</pre> | `null` | no |
 | deletion\_protection | A boolean indicating if the DB instance should have deletion protection enable | `bool` | `true` | no |
 | enable\_http\_endpoint | Enable Aurora Serverless HTTP endpoint (Data API) | `bool` | `false` | no |
 | enabled\_cloudwatch\_logs\_exports | List of log types to export to cloudwatch | `list(string)` | `null` | no |
