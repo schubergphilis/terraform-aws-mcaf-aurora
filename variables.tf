@@ -241,6 +241,12 @@ variable "tags" {
   description = "A mapping of tags to assign to the bucket"
 }
 
+variable "timeout_action" {
+  type        = string
+  default     = "RollbackCapacityChange"
+  description = "The action to take when the timeout is reached"
+}
+
 variable "username" {
   type        = string
   description = "Username for the master DB user"

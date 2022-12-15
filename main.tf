@@ -89,6 +89,7 @@ resource "aws_rds_cluster" "default" {
       max_capacity             = var.max_capacity
       min_capacity             = var.min_capacity
       seconds_until_auto_pause = 1800
+      timeout_action           = var.timeout_action
     }
   }
 
