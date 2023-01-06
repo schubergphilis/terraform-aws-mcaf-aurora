@@ -54,9 +54,9 @@
 | preferred\_maintenance\_window | The weekly time range during which system maintenance can occur, in UTC e.g. wed:04:00-wed:04:30 | `string` | `null` | no |
 | publicly\_accessible | Control if instances in cluster are publicly accessible | `string` | `false` | no |
 | security\_group\_ids | List of security group IDs allowed to connect to Aurora | `list(string)` | `[]` | no |
-| skip\_final\_snapshot | Determines whether a final snapshot is created before deleting the cluster | `bool` | `false` | no |
 | snapshot\_identifier | Database snapshot identifier to create the database from | `string` | `null` | no |
 | storage\_encrypted | Specifies whether the DB cluster is encrypted | `bool` | `true` | no |
+| timeout\_action | The action to take when the timeout is reached | `string` | `"RollbackCapacityChange"` | no |
 
 ## Outputs
 
