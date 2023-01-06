@@ -1,3 +1,7 @@
+locals {
+  skip_final_snapshot = var.final_snapshot_identifier == null
+}
+
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
@@ -76,7 +80,7 @@ resource "aws_rds_cluster" "default" {
   kms_key_id                          = var.kms_key_id
   master_password                     = var.password
   master_username                     = var.username
-  skip_final_snapshot                 = var.skip_final_snapshot
+  skip_final_snapshot                 = local.skip_final_snapshot
   snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
   tags                                = var.tags

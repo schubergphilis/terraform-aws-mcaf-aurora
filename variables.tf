@@ -208,12 +208,6 @@ variable "security_group_ids" {
   description = "List of security group IDs allowed to connect to Aurora"
 }
 
-variable "skip_final_snapshot" {
-  type        = bool
-  default     = false
-  description = "Determines whether a final snapshot is created before deleting the cluster"
-}
-
 variable "snapshot_identifier" {
   type        = string
   default     = null
