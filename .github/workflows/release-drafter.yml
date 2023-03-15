@@ -1,0 +1,16 @@
+name: "release-drafter"
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  workflow_dispatch:      
+
+permissions:
+      # write permission is required to create a github release
+      contents: write
+
+jobs:
+  terraform:
+    uses: schubergphilis/mcaf-github-workflows/.github/workflows/release-drafter.yml@main

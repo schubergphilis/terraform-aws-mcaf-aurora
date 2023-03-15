@@ -1,0 +1,16 @@
+name: "update-changelog"
+
+on:
+  release:
+    types:
+      - published
+  workflow_dispatch:  
+  
+permissions:
+      contents: write
+
+jobs:
+  terraform:
+    uses: schubergphilis/mcaf-github-workflows/.github/workflows/update-changelog.yml@main
+    secrets:
+      mcaf-github-token: ${{ secrets.MCAF_GITHUB_TOKEN }}
