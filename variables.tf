@@ -1,3 +1,15 @@
+variable "allow_major_version_upgrade" {
+  description = "Enable to allow major engine version upgrades when changing engine versions"
+  type        = bool
+  default     = false
+}
+
+variable "auto_minor_version_upgrade" {
+  description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window`"
+  type        = bool
+  default     = true
+}
+
 variable "apply_immediately" {
   type        = bool
   default     = true
@@ -8,12 +20,6 @@ variable "auto_pause" {
   type        = bool
   default     = true
   description = "Whether to enable automatic pause"
-}
-
-variable "availability_zones" {
-  type        = list(string)
-  default     = []
-  description = "List of availability zones to deploy Aurora in"
 }
 
 variable "backup_retention_period" {
@@ -115,7 +121,7 @@ variable "final_snapshot_identifier" {
 
 variable "iam_database_authentication_enabled" {
   type        = bool
-  default     = null
+  default     = true
   description = "Specify if mapping AWS IAM accounts to database accounts is enabled."
 }
 

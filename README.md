@@ -1,6 +1,10 @@
 # terraform-aws-mcaf-aurora
 
-<!--- BEGIN_TF_DOCS --->
+Terraform module to create an AWS RDS Aurora cluster.
+
+IMPORTANT: We do not pin modules to versions in our examples. We highly recommend that in your code you pin the version to the exact version you are using so that your infrastructure remains stable.
+
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -74,4 +78,8 @@
 | security\_group\_id | The securitiry group id that is attached to the Aurora cluster |
 | username | Username for the master DB user |
 
-<!--- END_TF_DOCS --->
+<!-- END_TF_DOCS -->
+
+## Licensing
+
+100% Open Source and licensed under the Apache License Version 2.0.
