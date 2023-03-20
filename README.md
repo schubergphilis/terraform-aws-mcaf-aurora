@@ -64,7 +64,7 @@ IMPORTANT: We do not pin modules to versions in our examples. We highly recommen
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the Aurora cluster | `string` | `"serverless"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | The engine version of the Aurora cluster | `string` | `"5.7.mysql_aurora.2.08.3"` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | Identifier of the final snapshot to create before deleting the cluster | `string` | `null` | no |
-| <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `true` | no |
+| <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `null` | no |
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A list of IAM Role ARNs to associate with the cluster | `list(string)` | `null` | no |
 | <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach. Only for serverless engine\_mode | `string` | `"db.r5.large"` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach. Only for serverless engine\_mode | `number` | `1` | no |
