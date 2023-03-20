@@ -121,7 +121,7 @@ variable "final_snapshot_identifier" {
 
 variable "iam_database_authentication_enabled" {
   type        = bool
-  default     = true
+  default     = null
   description = "Specify if mapping AWS IAM accounts to database accounts is enabled."
 }
 

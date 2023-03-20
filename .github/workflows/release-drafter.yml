@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - main
-  workflow_dispatch:      
+  workflow_dispatch:
 
 permissions:
       # write permission is required to create a github release

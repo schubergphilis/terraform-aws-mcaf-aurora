@@ -102,4 +102,4 @@ IMPORTANT: We do not pin modules to versions in our examples. We highly recommen
 
 ## Licensing
 
-100% Open Source and licensed under the Apache License Version 2.0.
+100% Open Source and licensed under the Apache License Version 2.0. See [LICENSE](https://github.com/schubergphilis/terraform-aws-mcaf-aurora/blob/master/LICENSE) for full details.
