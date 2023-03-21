@@ -6,59 +6,13 @@ data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
 }
 
-resource "aws_security_group" "default" {
-  name        = "${var.stack}-aurora"
-  description = "Access to Aurora"
-  vpc_id      = data.aws_subnet.selected.vpc_id
-  tags        = var.tags
-}
-
-resource "aws_security_group_rule" "ingress_cidrs" {
-  count             = var.cidr_blocks != null ? 1 : 0
-  security_group_id = aws_security_group.default.id
-  type              = "ingress"
-  description       = "Aurora ingress"
-  from_port         = aws_rds_cluster.default.port
-  to_port           = aws_rds_cluster.default.port
-  protocol          = "tcp"
-  cidr_blocks       = var.cidr_blocks
-}
-
-resource "aws_security_group_rule" "ingress_groups" {
-  count                    = length(var.security_group_ids)
-  security_group_id        = aws_security_group.default.id
-  type                     = "ingress"
-  description              = "Aurora ingress"
-  from_port                = aws_rds_cluster.default.port
-  to_port                  = aws_rds_cluster.default.port
-  protocol                 = "tcp"
-  source_security_group_id = var.security_group_ids[count.index]
-}
-
-resource "aws_db_subnet_group" "default" {
-  name       = var.stack
-  subnet_ids = var.subnet_ids
-  tags       = var.tags
-}
-
-resource "aws_rds_cluster_parameter_group" "default" {
-  name        = var.stack
-  description = "RDS default cluster parameter group"
-  family      = var.cluster_family
-  tags        = var.tags
-
-  dynamic "parameter" {
-    for_each = var.cluster_parameters
-
-    content {
-      apply_method = parameter.value.apply_method
-      name         = parameter.value.name
-      value        = parameter.value.value
-    }
-  }
-}
+################################################################################
+# Cluster
+################################################################################
 
 resource "aws_rds_cluster" "default" {
+  #checkov:skip=CKV2_AWS_8: Ensuring that RDS clusters have an AWS Backup backup plan is not the responsibility of this module
+  allow_major_version_upgrade         = var.allow_major_version_upgrade
   apply_immediately                   = var.apply_immediately
   backup_retention_period             = var.backup_retention_period
   cluster_identifier                  = var.stack
@@ -67,19 +21,19 @@ resource "aws_rds_cluster" "default" {
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
   db_subnet_group_name                = aws_db_subnet_group.default.name
   deletion_protection                 = var.deletion_protection
-  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
   enable_http_endpoint                = var.enable_http_endpoint
+  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
   engine                              = var.engine
   engine_mode                         = var.engine_mode == "serverlessv2" ? "provisioned" : var.engine_mode
   engine_version                      = var.engine_version
   final_snapshot_identifier           = var.final_snapshot_identifier
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   iam_roles                           = var.iam_roles
-  preferred_backup_window             = var.preferred_backup_window
-  preferred_maintenance_window        = var.preferred_maintenance_window
   kms_key_id                          = var.kms_key_id
   master_password                     = var.password
   master_username                     = var.username
+  preferred_backup_window             = var.preferred_backup_window
+  preferred_maintenance_window        = var.preferred_maintenance_window
   skip_final_snapshot                 = local.skip_final_snapshot
   snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
@@ -104,41 +58,17 @@ resource "aws_rds_cluster" "default" {
       min_capacity = var.min_capacity
     }
   }
-
 }
 
-resource "aws_db_parameter_group" "default" {
-  count       = var.database_parameters != null ? 1 : 0
-  name        = "${var.stack}-aurora"
-  description = "RDS default database parameter group"
-  family      = var.cluster_family
-  tags        = var.tags
-
-  dynamic "parameter" {
-    for_each = var.database_parameters
-
-    content {
-      apply_method = parameter.value.apply_method
-      name         = parameter.value.name
-      value        = parameter.value.value
-    }
-  }
-}
-
-module "rds_enhanced_monitoring_role" {
-  count                 = var.monitoring_interval != null ? 1 : 0
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-role?ref=v0.3.2"
-  name                  = "RDSEnhancedMonitoringRole-${var.stack}"
-  principal_type        = "Service"
-  principal_identifiers = ["monitoring.rds.amazonaws.com"]
-  policy_arns           = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
-  postfix               = false
-  tags                  = var.tags
-}
+################################################################################
+# Cluster Instance(s)
+################################################################################
 
 resource "aws_rds_cluster_instance" "cluster_instances" {
-  count                                 = var.engine_mode == "serverless" ? 0 : var.instance_count
+  count = var.engine_mode == "serverless" ? 0 : var.instance_count
+
   apply_immediately                     = var.apply_immediately
+  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
   cluster_identifier                    = aws_rds_cluster.default.id
   copy_tags_to_snapshot                 = true
   db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
@@ -154,4 +84,110 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
+}
+
+################################################################################
+# DB Subnet Group
+################################################################################
+
+resource "aws_db_subnet_group" "default" {
+  name       = var.stack
+  subnet_ids = var.subnet_ids
+  tags       = var.tags
+}
+
+################################################################################
+# Enhanced Monitoring
+################################################################################
+
+module "rds_enhanced_monitoring_role" {
+  count = var.monitoring_interval != null ? 1 : 0
+
+  name                  = "RDSEnhancedMonitoringRole-${var.stack}"
+  permissions_boundary  = var.permissions_boundary
+  policy_arns           = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
+  postfix               = false
+  principal_identifiers = ["monitoring.rds.amazonaws.com"]
+  principal_type        = "Service"
+  source                = "github.com/schubergphilis/terraform-aws-mcaf-role?ref=v0.3.3"
+  tags                  = var.tags
+}
+
+################################################################################
+# Parameter Group - Cluster
+################################################################################
+
+resource "aws_rds_cluster_parameter_group" "default" {
+  name        = var.stack
+  description = "RDS default cluster parameter group"
+  family      = var.cluster_family
+  tags        = var.tags
+
+  dynamic "parameter" {
+    for_each = var.cluster_parameters
+
+    content {
+      apply_method = parameter.value.apply_method
+      name         = parameter.value.name
+      value        = parameter.value.value
+    }
+  }
+}
+
+################################################################################
+# Parameter Group - DB
+################################################################################
+
+resource "aws_db_parameter_group" "default" {
+  count = var.database_parameters != null ? 1 : 0
+
+  description = "RDS default database parameter group"
+  family      = var.cluster_family
+  name        = "${var.stack}-aurora"
+  tags        = var.tags
+
+  dynamic "parameter" {
+    for_each = var.database_parameters
+
+    content {
+      apply_method = parameter.value.apply_method
+      name         = parameter.value.name
+      value        = parameter.value.value
+    }
+  }
+}
+
+################################################################################
+# Security Group
+################################################################################
+
+resource "aws_security_group" "default" {
+  name        = "${var.stack}-aurora"
+  description = "Access to Aurora"
+  vpc_id      = data.aws_subnet.selected.vpc_id
+  tags        = var.tags
+}
+
+resource "aws_security_group_rule" "ingress_cidrs" {
+  count = var.cidr_blocks != null ? 1 : 0
+
+  cidr_blocks       = var.cidr_blocks
+  description       = "Aurora ingress"
+  from_port         = aws_rds_cluster.default.port
+  protocol          = "tcp"
+  security_group_id = aws_security_group.default.id
+  to_port           = aws_rds_cluster.default.port
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "ingress_groups" {
+  count = length(var.security_group_ids)
+
+  description              = "Aurora ingress"
+  from_port                = aws_rds_cluster.default.port
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.default.id
+  source_security_group_id = var.security_group_ids[count.index]
+  to_port                  = aws_rds_cluster.default.port
+  type                     = "ingress"
 }
