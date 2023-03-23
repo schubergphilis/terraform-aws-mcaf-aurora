@@ -30,6 +30,24 @@ module "aurora" {
   subnet_ids                          = module.vpc.private_subnets
   username                            = "admin_user"
 
+  cluster_endpoints = {
+    reader = {
+      type           = "READER"
+      static_members = ["example-3"] //"${var.stack}-${instances key}"
+    }
+  }
+
+  instances = {
+    1 = {}
+    2 = {
+      promotion_tier = 10,
+    }
+    3 = {
+      promotion_tier = 15,
+      instance_class = "db.t3.medium"
+    }
+  }
+
   tags = {
     env = "production"
   }

@@ -28,15 +28,19 @@ variable "backup_retention_period" {
   description = "The days to retain backups for"
 }
 
-variable "cidr_blocks" {
-  type        = list(string)
-  default     = null
-  description = "List of CIDR blocks that should be allowed access to the Aurora cluster"
+variable "cluster_endpoints" {
+  description = "A map of additional cluster endpoints and their attributes to be created"
+  type = map(object({
+    type            = string
+    static_members  = optional(list(string), null)
+    exclude_members = optional(list(string), null)
+  }))
+  default = null
 }
 
 variable "cluster_family" {
   type        = string
-  default     = "aurora-mysql5.7"
+  default     = "aurora-mysql8.0"
   description = "The family of the DB cluster parameter group"
 }
 
@@ -90,10 +94,16 @@ variable "enable_http_endpoint" {
   description = "Enable Aurora Serverless HTTP endpoint (Data API)"
 }
 
+
 variable "engine" {
   type        = string
   default     = "aurora-mysql"
   description = "The engine type of the Aurora cluster"
+
+  validation {
+    condition     = contains(["aurora", "aurora-mysql", "aurora-postgresql"], var.engine)
+    error_message = "Allowed values for engine are \"aurora\", \"aurora-mysql\", \"aurora-postgresql\""
+  }
 }
 
 variable "engine_mode" {
@@ -109,7 +119,7 @@ variable "engine_mode" {
 
 variable "engine_version" {
   type        = string
-  default     = "5.7.mysql_aurora.2.08.3"
+  default     = "8.0.mysql_aurora.3.02.2"
   description = "The engine version of the Aurora cluster"
 }
 
@@ -134,13 +144,18 @@ variable "iam_roles" {
 variable "instance_class" {
   type        = string
   default     = "db.r5.large"
-  description = "The class of RDS instances to attach. Only for serverless engine_mode"
+  description = "The class of RDS instances to attach to the cluster instances. Not applicable for serverless engine_mode"
 }
 
-variable "instance_count" {
-  type        = number
-  default     = 1
-  description = "The number of RDS instances to attach. Only for serverless engine_mode"
+variable "instances" {
+  description = "A map of cluster instance settings, when specifying instance_class here will overwrite the default set instance class"
+  type = map(object({
+    instance_class = optional(string, null)
+    promotion_tier = optional(number, null)
+  }))
+  default = {
+    1 = {}
+  }
 }
 
 variable "kms_key_id" {
@@ -208,10 +223,13 @@ variable "publicly_accessible" {
   description = "Control if instances in cluster are publicly accessible"
 }
 
-variable "security_group_ids" {
-  type        = list(string)
-  default     = []
-  description = "List of security group IDs allowed to connect to Aurora"
+variable "security_group_rules" {
+  description = "Map of security group rules to add to the cluster security group created"
+  type = object({
+    ingress_allowed_cidr_blocks       = optional(list(string), null)
+    ingress_allowed_security_group_id = optional(string, null)
+  })
+  default = null
 }
 
 variable "snapshot_identifier" {
@@ -238,6 +256,7 @@ variable "subnet_ids" {
 
 variable "tags" {
   type        = map(string)
+  default     = {}
   description = "A mapping of tags to assign to the bucket"
 }
 

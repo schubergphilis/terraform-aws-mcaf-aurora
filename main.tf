@@ -61,11 +61,34 @@ resource "aws_rds_cluster" "default" {
 }
 
 ################################################################################
+# Cluster Endpoint(s)
+################################################################################
+
+resource "aws_rds_cluster_endpoint" "default" {
+  for_each = { for identifier, settings in var.cluster_endpoints : identifier => settings if var.engine_mode != "serverless" }
+
+  cluster_endpoint_identifier = lower(each.key)
+  cluster_identifier          = aws_rds_cluster.default.id
+  custom_endpoint_type        = each.value.type
+  excluded_members            = each.value.excluded_members
+  static_members              = each.value.static_members
+  tags                        = var.tags
+
+  depends_on = [
+    aws_rds_cluster.default
+  ]
+}
+
+################################################################################
 # Cluster Instance(s)
 ################################################################################
 
-resource "aws_rds_cluster_instance" "cluster_instances" {
-  count = var.engine_mode == "serverless" ? 0 : var.instance_count
+/*
+Because Terraform uses parallelism by default, using 1 resource with a loop results in downtime when modifying certain variables.
+therefore a main cluster instance resource is created and additional cluster instance resources when applicable to ensure 1 instance is always available.
+*/
+resource "aws_rds_cluster_instance" "cluster_instance_main" {
+  for_each = { for identifier, settings in zipmap(slice(keys(var.instances), 0, 1), slice(values(var.instances), 0, 1)) : identifier => settings if var.engine_mode != "serverless" }
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
@@ -75,15 +98,43 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.stack}-${count.index}"
-  instance_class                        = var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class
+  identifier                            = "${var.stack}-${each.key}"
+  instance_class                        = try(each.value.instance_class, var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class)
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
+  promotion_tier                        = try(each.value.promotion_tier, null)
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
+}
+
+resource "aws_rds_cluster_instance" "cluster_instances_additional" {
+  for_each = { for identifier, settings in zipmap(slice(keys(var.instances), 1, length(keys(var.instances))), slice(values(var.instances), 1, length(var.instances))) : identifier => settings if var.engine_mode != "serverless" }
+
+  apply_immediately                     = var.apply_immediately
+  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  cluster_identifier                    = aws_rds_cluster.default.id
+  copy_tags_to_snapshot                 = true
+  db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
+  db_subnet_group_name                  = aws_db_subnet_group.default.name
+  engine                                = var.engine
+  engine_version                        = var.engine_version
+  identifier                            = "${var.stack}-${each.key}"
+  instance_class                        = try(each.value.instance_class, var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class)
+  monitoring_interval                   = var.monitoring_interval
+  monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
+  performance_insights_enabled          = var.performance_insights
+  performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
+  performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
+  promotion_tier                        = try(each.value.promotion_tier, null)
+  publicly_accessible                   = var.publicly_accessible
+  tags                                  = var.tags
+
+  depends_on = [
+    aws_rds_cluster_instance.cluster_instance_main
+  ]
 }
 
 ################################################################################
@@ -169,9 +220,9 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group_rule" "ingress_cidrs" {
-  count = var.cidr_blocks != null ? 1 : 0
+  count = try(var.security_group_rules.ingress_allowed_cidr_blocks, null) != null ? 1 : 0
 
-  cidr_blocks       = var.cidr_blocks
+  cidr_blocks       = var.security_group_rules.ingress_allowed_cidr_blocks
   description       = "Aurora ingress"
   from_port         = aws_rds_cluster.default.port
   protocol          = "tcp"
@@ -181,13 +232,13 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  count = length(var.security_group_ids)
+  count = try(var.security_group_rules.ingress_allowed_security_group_id, null) != null ? 1 : 0
 
   description              = "Aurora ingress"
   from_port                = aws_rds_cluster.default.port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.default.id
-  source_security_group_id = var.security_group_ids[count.index]
+  source_security_group_id = var.security_group_rules.ingress_allowed_security_group_id
   to_port                  = aws_rds_cluster.default.port
   type                     = "ingress"
 }
