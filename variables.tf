@@ -146,15 +146,19 @@ variable "instance_class" {
   description = "The class of RDS instances to attach to the cluster instances. Not applicable for serverless engine_mode"
 }
 
-variable "instances" {
-  description = "A map of cluster instance settings, when specifying instance_class here will overwrite the default set instance class"
+variable "instance_config" {
+  description = "Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number"
   type = map(object({
     instance_class = optional(string, null)
     promotion_tier = optional(number, null)
   }))
-  default = {
-    1 = {}
-  }
+  default = null
+}
+
+variable "instance_count" {
+  type        = number
+  default     = 1
+  description = "The number of RDS instances to attach. Only for serverless engine_mode"
 }
 
 variable "kms_key_id" {

@@ -29,8 +29,8 @@ output "id" {
 }
 
 output "instance_ids" {
-  value       = merge({ for k, v in aws_rds_cluster_instance.cluster_instance_main : k => v.id }, { for k, v in aws_rds_cluster_instance.cluster_instances_additional : k => v.id })
-  description = "ID's of RDS Aurora instances"
+  value       = merge({ for k, v in aws_rds_cluster_instance.first : k => v.id }, { for k, v in aws_rds_cluster_instance.rest : k => v.id })
+  description = "Aurora instances IDs"
 }
 
 output "port" {

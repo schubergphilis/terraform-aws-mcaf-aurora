@@ -24,10 +24,11 @@ module "vpc" {
 module "aurora" {
   source = "../.."
 
-  name        = "example"
-  engine_mode = "provisioned"
-  password    = "password"
-  subnet_ids  = module.vpc.private_subnets
+  name           = "example"
+  engine_mode    = "provisioned"
+  instance_count = 3
+  password       = "password"
+  subnet_ids     = module.vpc.private_subnets
 
   cluster_endpoints = {
     reader = {
@@ -36,14 +37,8 @@ module "aurora" {
     }
   }
 
-  instances = {
-    1 = {}
-    2 = {
-      promotion_tier = 10,
-    }
-    3 = {
-      promotion_tier = 15,
-      instance_class = "db.t3.medium"
-    }
+  instance_config = {
+    2 = { promotion_tier = 10 }
+    3 = { promotion_tier = 20, instance_class = "db.t3.medium" }
   }
 }
