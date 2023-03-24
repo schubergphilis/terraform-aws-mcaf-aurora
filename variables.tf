@@ -230,8 +230,8 @@ variable "publicly_accessible" {
 variable "security_group_rules" {
   description = "Map of security group rules to add to the cluster security group created"
   type = object({
-    ingress_allowed_cidr_blocks       = optional(list(string), null)
-    ingress_allowed_security_group_id = optional(string, null)
+    ingress_allowed_cidr_blocks        = optional(list(string), null)
+    ingress_allowed_security_group_ids = optional(list(string), null)
   })
   default = null
 }

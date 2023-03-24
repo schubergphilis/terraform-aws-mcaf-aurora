@@ -234,13 +234,13 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  count = try(var.security_group_rules.ingress_allowed_security_group_id, null) != null ? 1 : 0
+  for_each = toset(try(var.security_group_rules.ingress_allowed_security_group_ids, []))
 
   description              = "Aurora ingress"
   from_port                = aws_rds_cluster.default.port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.default.id
-  source_security_group_id = var.security_group_rules.ingress_allowed_security_group_id
+  source_security_group_id = each.value
   to_port                  = aws_rds_cluster.default.port
   type                     = "ingress"
 }
