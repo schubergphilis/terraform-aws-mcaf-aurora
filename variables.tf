@@ -31,9 +31,9 @@ variable "backup_retention_period" {
 variable "cluster_endpoints" {
   description = "A map of additional cluster endpoints and their attributes to be created"
   type = map(object({
-    type            = string
-    static_members  = optional(list(string), null)
-    exclude_members = optional(list(string), null)
+    excluded_members = optional(list(string), [])
+    static_members   = optional(list(string), [])
+    type             = string
   }))
   default = null
 }

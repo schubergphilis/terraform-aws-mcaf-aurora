@@ -33,7 +33,7 @@ module "aurora" {
   cluster_endpoints = {
     reader = {
       type           = "READER"
-      static_members = ["example-3"] //"${var.name}-${instances key}"
+      static_members = [3]
     }
   }
 
