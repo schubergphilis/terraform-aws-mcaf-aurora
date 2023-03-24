@@ -28,7 +28,6 @@ module "aurora" {
   engine_mode = "provisioned"
   password    = "password"
   subnet_ids  = module.vpc.private_subnets
-  username    = "admin_user"
 
   cluster_endpoints = {
     reader = {

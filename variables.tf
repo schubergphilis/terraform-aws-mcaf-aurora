@@ -94,7 +94,6 @@ variable "enable_http_endpoint" {
   description = "Enable Aurora Serverless HTTP endpoint (Data API)"
 }
 
-
 variable "engine" {
   type        = string
   default     = "aurora-mysql"
@@ -268,5 +267,6 @@ variable "timeout_action" {
 
 variable "username" {
   type        = string
+  default     = "root"
   description = "Username for the master DB user"
 }
