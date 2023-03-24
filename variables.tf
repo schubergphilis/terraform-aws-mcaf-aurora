@@ -182,6 +182,11 @@ variable "monitoring_interval" {
   description = "The interval (seconds) for collecting enhanced monitoring metrics"
 }
 
+variable "name" {
+  type        = string
+  description = "The name for the Aurora Cluster"
+}
+
 variable "password" {
   type        = string
   description = "Password for the master DB user"
@@ -236,11 +241,6 @@ variable "snapshot_identifier" {
   type        = string
   default     = null
   description = "Database snapshot identifier to create the database from"
-}
-
-variable "stack" {
-  type        = string
-  description = "The stack name for the Aurora Cluster"
 }
 
 variable "storage_encrypted" {

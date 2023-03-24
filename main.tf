@@ -15,7 +15,7 @@ resource "aws_rds_cluster" "default" {
   allow_major_version_upgrade         = var.allow_major_version_upgrade
   apply_immediately                   = var.apply_immediately
   backup_retention_period             = var.backup_retention_period
-  cluster_identifier                  = var.stack
+  cluster_identifier                  = var.name
   copy_tags_to_snapshot               = true
   database_name                       = var.database
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
@@ -42,6 +42,7 @@ resource "aws_rds_cluster" "default" {
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
+
     content {
       auto_pause               = var.auto_pause
       max_capacity             = var.max_capacity
@@ -53,6 +54,7 @@ resource "aws_rds_cluster" "default" {
 
   dynamic "serverlessv2_scaling_configuration" {
     for_each = var.engine_mode == "serverlessv2" ? { create : null } : {}
+
     content {
       max_capacity = var.max_capacity
       min_capacity = var.min_capacity
@@ -98,7 +100,7 @@ resource "aws_rds_cluster_instance" "cluster_instance_main" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.stack}-${each.key}"
+  identifier                            = "${var.name}-${each.key}"
   instance_class                        = try(each.value.instance_class, var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class)
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
@@ -121,7 +123,7 @@ resource "aws_rds_cluster_instance" "cluster_instances_additional" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.stack}-${each.key}"
+  identifier                            = "${var.name}-${each.key}"
   instance_class                        = try(each.value.instance_class, var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class)
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
@@ -142,7 +144,7 @@ resource "aws_rds_cluster_instance" "cluster_instances_additional" {
 ################################################################################
 
 resource "aws_db_subnet_group" "default" {
-  name       = var.stack
+  name       = var.name
   subnet_ids = var.subnet_ids
   tags       = var.tags
 }
@@ -154,7 +156,7 @@ resource "aws_db_subnet_group" "default" {
 module "rds_enhanced_monitoring_role" {
   count = var.monitoring_interval != null ? 1 : 0
 
-  name                  = "RDSEnhancedMonitoringRole-${var.stack}"
+  name                  = "RDSEnhancedMonitoringRole-${var.name}"
   permissions_boundary  = var.permissions_boundary
   policy_arns           = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
   postfix               = false
@@ -169,7 +171,7 @@ module "rds_enhanced_monitoring_role" {
 ################################################################################
 
 resource "aws_rds_cluster_parameter_group" "default" {
-  name        = var.stack
+  name        = var.name
   description = "RDS default cluster parameter group"
   family      = var.cluster_family
   tags        = var.tags
@@ -192,9 +194,9 @@ resource "aws_rds_cluster_parameter_group" "default" {
 resource "aws_db_parameter_group" "default" {
   count = var.database_parameters != null ? 1 : 0
 
+  name        = "${var.name}-aurora"
   description = "RDS default database parameter group"
   family      = var.cluster_family
-  name        = "${var.stack}-aurora"
   tags        = var.tags
 
   dynamic "parameter" {
@@ -213,7 +215,7 @@ resource "aws_db_parameter_group" "default" {
 ################################################################################
 
 resource "aws_security_group" "default" {
-  name        = "${var.stack}-aurora"
+  name        = "${var.name}-aurora"
   description = "Access to Aurora"
   vpc_id      = data.aws_subnet.selected.vpc_id
   tags        = var.tags

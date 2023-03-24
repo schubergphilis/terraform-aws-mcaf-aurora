@@ -24,7 +24,7 @@ module "vpc" {
 module "aurora" {
   source = "../.."
 
-  stack       = "example"
+  name        = "example"
   engine_mode = "provisioned"
   password    = "password"
   subnet_ids  = module.vpc.private_subnets
@@ -33,7 +33,7 @@ module "aurora" {
   cluster_endpoints = {
     reader = {
       type           = "READER"
-      static_members = ["example-3"] //"${var.stack}-${instances key}"
+      static_members = ["example-3"] //"${var.name}-${instances key}"
     }
   }
 
