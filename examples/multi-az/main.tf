@@ -9,6 +9,11 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
+resource "random_password" "root_password" {
+  length  = "20"
+  special = false
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 3.0"
@@ -27,7 +32,7 @@ module "aurora" {
   name           = "example"
   engine_mode    = "provisioned"
   instance_count = 3
-  password       = "password"
+  password       = random_password.root_password.result
   subnet_ids     = module.vpc.private_subnets
 
   cluster_endpoints = {
@@ -40,5 +45,9 @@ module "aurora" {
   instance_config = {
     2 = { promotion_tier = 10 }
     3 = { promotion_tier = 20, instance_class = "db.t3.medium" }
+  }
+
+  security_group_rules = {
+    ingress_allowed_cidr_blocks = [local.vpc_cidr]
   }
 }

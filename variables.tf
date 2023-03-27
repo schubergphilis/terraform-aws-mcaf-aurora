@@ -35,7 +35,7 @@ variable "cluster_endpoints" {
     static_members   = optional(list(string), [])
     type             = string
   }))
-  default = null
+  default = {}
 }
 
 variable "cluster_family" {
@@ -130,7 +130,7 @@ variable "final_snapshot_identifier" {
 
 variable "iam_database_authentication_enabled" {
   type        = bool
-  default     = null
+  default     = true
   description = "Specify if mapping AWS IAM accounts to database accounts is enabled."
 }
 
@@ -158,7 +158,7 @@ variable "instance_config" {
 variable "instance_count" {
   type        = number
   default     = 1
-  description = "The number of RDS instances to attach. Only for serverless engine_mode"
+  description = "The number of RDS instances to attach. Not applicable for serverless engine_mode"
 }
 
 variable "kms_key_id" {

@@ -9,6 +9,11 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
+resource "random_password" "root_password" {
+  length  = "20"
+  special = false
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 3.0"
@@ -24,8 +29,8 @@ module "vpc" {
 module "aurora" {
   source = "../.."
 
-  name        = "example"
   engine_mode = "provisioned"
-  password    = "password"
+  name        = "example"
+  password    = random_password.root_password.result
   subnet_ids  = module.vpc.private_subnets
 }

@@ -91,7 +91,7 @@ Because Terraform uses parallelism by default, using 1 resource with a loop resu
 therefore a main cluster instance resource is created and additional cluster instance resources when applicable to ensure 1 instance is always available.
 */
 resource "aws_rds_cluster_instance" "first" {
-  count = var.engine_mode == "serverless" ? 0 : 1
+  count = var.engine_mode == "serverless" ? 0 : var.instance_count > 0 ? 1 : 0
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
