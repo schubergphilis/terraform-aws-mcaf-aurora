@@ -101,14 +101,14 @@ resource "aws_rds_cluster_instance" "first" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.name}-${count.index + 1}"
-  instance_class                        = try(var.instance_config[count.index + 1]["instance_class"], null) != null ? var.instance_config[count.index + 1]["instance_class"] : local.instance_class
+  identifier                            = "${var.name}-${count.index}"
+  instance_class                        = try(var.instance_config[count.index]["instance_class"], null) != null ? var.instance_config[count.index + 1]["instance_class"] : local.instance_class
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
-  promotion_tier                        = try(var.instance_config[count.index + 1]["promotion_tier"], null)
+  promotion_tier                        = try(var.instance_config[count.index]["promotion_tier"], null)
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
 }
@@ -124,14 +124,14 @@ resource "aws_rds_cluster_instance" "rest" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.name}-${count.index + 2}"
-  instance_class                        = try(var.instance_config[count.index + 2]["instance_class"], null) != null ? var.instance_config[count.index + 2]["instance_class"] : local.instance_class
+  identifier                            = "${var.name}-${count.index + 1}"
+  instance_class                        = try(var.instance_config[count.index + 1]["instance_class"], null) != null ? var.instance_config[count.index + 1]["instance_class"] : local.instance_class
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
-  promotion_tier                        = try(var.instance_config[count.index + 2]["promotion_tier"], null)
+  promotion_tier                        = try(var.instance_config[count.index + 1]["promotion_tier"], null)
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
 
@@ -235,7 +235,7 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  for_each = toset(try(var.security_group_rules.ingress_allowed_security_group_ids, []))
+  for_each = toset(var.security_group_rules.ingress_allowed_security_group_ids)
 
   description              = "Aurora ingress"
   from_port                = aws_rds_cluster.default.port
