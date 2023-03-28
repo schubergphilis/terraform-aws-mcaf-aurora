@@ -35,7 +35,7 @@ module "aurora" {
   password       = random_password.root_password.result
   subnet_ids     = module.vpc.private_subnets
 
-  cluster_endpoints = {
+  endpoints = {
     reader = {
       type           = "READER"
       static_members = [3]

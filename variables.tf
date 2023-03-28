@@ -28,16 +28,6 @@ variable "backup_retention_period" {
   description = "The days to retain backups for"
 }
 
-variable "cluster_endpoints" {
-  description = "A map of additional cluster endpoints and their attributes to be created"
-  type = map(object({
-    excluded_members = optional(list(string), [])
-    static_members   = optional(list(string), [])
-    type             = string
-  }))
-  default = {}
-}
-
 variable "cluster_family" {
   type        = string
   default     = "aurora-mysql8.0"
@@ -92,6 +82,16 @@ variable "enable_http_endpoint" {
   type        = bool
   default     = false
   description = "Enable Aurora Serverless HTTP endpoint (Data API)"
+}
+
+variable "endpoints" {
+  description = "A map of additional cluster endpoints to be created"
+  type = map(object({
+    excluded_members = optional(list(string), [])
+    static_members   = optional(list(string), [])
+    type             = string
+  }))
+  default = {}
 }
 
 variable "engine" {
