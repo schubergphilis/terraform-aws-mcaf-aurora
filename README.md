@@ -4,13 +4,13 @@ Terraform module to create an AWS RDS Aurora cluster.
 
 IMPORTANT: We do not pin modules to versions in our examples. We highly recommend that in your code you pin the version to the exact version you are using so that your infrastructure remains stable.
 
-## Notes
+## Usage
 
-### Creating and managing cluster instances in multiple availability zones
+Default behaviour of this module is to create a two-node cluster, a writer and a reader for high availability.
 
-To deploy aurora accross multiple availability zones you only need to specify two or more instances using the `instance_count` variable. This way one of the instances will become the master instance and the other instance(s) will become reader instance(s).
+This can be changed by updating `var.instance_count`. By default all instances use the same settings. To configure settings per instance, use `var.instance_config`.
 
-By default, all instances will be deployed using the same settings. Specific settings can be overwritten by using the variable `instance_config`. Read the variable description and the [multi-az example](https://github.com/schubergphilis/terraform-aws-mcaf-aurora/blob/master/examples/multi-az) for more information.
+**NOTE**: keys in `var.instance_count` start from `1`. See the [full example](https://github.com/schubergphilis/terraform-aws-mcaf-aurora/blob/master/examples/full) to see it used.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements

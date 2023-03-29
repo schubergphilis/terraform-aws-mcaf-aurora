@@ -155,7 +155,7 @@ variable "iam_roles" {
 variable "instance_class" {
   type        = string
   default     = "db.r5.large"
-  description = "The class of RDS instances to attach to the cluster instances. Not applicable for serverless engine_mode"
+  description = "The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`)"
 }
 
 variable "instance_config" {
@@ -169,8 +169,8 @@ variable "instance_config" {
 
 variable "instance_count" {
   type        = number
-  default     = 1
-  description = "The number of RDS instances to attach. Not applicable for serverless engine_mode"
+  default     = 2
+  description = "The number of RDS instances to attach (not used when `engine_mode` set to `serverless`)"
 }
 
 variable "kms_key_id" {

@@ -29,11 +29,12 @@ module "vpc" {
 module "aurora" {
   source = "../.."
 
-  name           = "example"
-  engine_mode    = "provisioned"
-  instance_count = 3
-  password       = random_password.root_password.result
-  subnet_ids     = module.vpc.private_subnets
+  name                = "example"
+  allowed_cidr_blocks = [local.vpc_cidr]
+  engine_mode         = "provisioned"
+  instance_count      = 3
+  password            = random_password.root_password.result
+  subnet_ids          = module.vpc.private_subnets
 
   endpoints = {
     reader = {
@@ -44,10 +45,6 @@ module "aurora" {
 
   instance_config = {
     2 = { promotion_tier = 10 }
-    3 = { promotion_tier = 20, instance_class = "db.t3.medium" }
-  }
-
-  security_group_rules = {
-    ingress_allowed_cidr_blocks = [local.vpc_cidr]
+    3 = { promotion_tier = 15, instance_class = "db.t3.medium" }
   }
 }
