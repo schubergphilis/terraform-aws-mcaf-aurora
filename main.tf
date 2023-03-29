@@ -91,30 +91,7 @@ Because Terraform uses parallelism by default, using 1 resource with a loop resu
 therefore a main cluster instance resource is created and additional cluster instance resources when applicable to ensure 1 instance is always available.
 */
 resource "aws_rds_cluster_instance" "first" {
-  count = var.engine_mode == "serverless" ? 0 : var.instance_count > 0 ? 1 : 0
-
-  apply_immediately                     = var.apply_immediately
-  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
-  cluster_identifier                    = aws_rds_cluster.default.id
-  copy_tags_to_snapshot                 = true
-  db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
-  db_subnet_group_name                  = aws_db_subnet_group.default.name
-  engine                                = var.engine
-  engine_version                        = var.engine_version
-  identifier                            = "${var.name}-${count.index}"
-  instance_class                        = try(var.instance_config[count.index]["instance_class"], null) != null ? var.instance_config[count.index + 1]["instance_class"] : local.instance_class
-  monitoring_interval                   = var.monitoring_interval
-  monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
-  performance_insights_enabled          = var.performance_insights
-  performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
-  performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
-  promotion_tier                        = try(var.instance_config[count.index]["promotion_tier"], null)
-  publicly_accessible                   = var.publicly_accessible
-  tags                                  = var.tags
-}
-
-resource "aws_rds_cluster_instance" "rest" {
-  count = var.engine_mode == "serverless" ? 0 : var.instance_count - 1
+  count = var.engine_mode == "serverless" ? 0 : 1
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
@@ -132,6 +109,29 @@ resource "aws_rds_cluster_instance" "rest" {
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
   promotion_tier                        = try(var.instance_config[count.index + 1]["promotion_tier"], null)
+  publicly_accessible                   = var.publicly_accessible
+  tags                                  = var.tags
+}
+
+resource "aws_rds_cluster_instance" "rest" {
+  count = var.engine_mode == "serverless" ? 0 : var.instance_count - 1
+
+  apply_immediately                     = var.apply_immediately
+  auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  cluster_identifier                    = aws_rds_cluster.default.id
+  copy_tags_to_snapshot                 = true
+  db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
+  db_subnet_group_name                  = aws_db_subnet_group.default.name
+  engine                                = var.engine
+  engine_version                        = var.engine_version
+  identifier                            = "${var.name}-${count.index + 2}"
+  instance_class                        = try(var.instance_config[count.index + 2]["instance_class"], null) != null ? var.instance_config[count.index + 2]["instance_class"] : local.instance_class
+  monitoring_interval                   = var.monitoring_interval
+  monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
+  performance_insights_enabled          = var.performance_insights
+  performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
+  performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
+  promotion_tier                        = try(var.instance_config[count.index + 2]["promotion_tier"], null)
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
 
@@ -223,7 +223,7 @@ resource "aws_security_group" "default" {
 }
 
 resource "aws_security_group_rule" "ingress_cidrs" {
-  count = try(var.security_group_rules.ingress_allowed_cidr_blocks, null) != null ? 1 : 0
+  count = var.allowed_cidr_blocks != null ? 1 : 0
 
   cidr_blocks       = var.security_group_rules.ingress_allowed_cidr_blocks
   description       = "Aurora ingress"
@@ -235,7 +235,7 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  for_each = toset(var.security_group_rules.ingress_allowed_security_group_ids)
+  for_each = toset(var.allowed_security_group_ids)
 
   description              = "Aurora ingress"
   from_port                = aws_rds_cluster.default.port

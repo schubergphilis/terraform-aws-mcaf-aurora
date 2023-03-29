@@ -9,14 +9,15 @@ This document captures breaking changes.
 The following variables have been renamed:
 
 - `stack` -> `name`
-- `cidr_blocks` -> `security_group_rules.ingress_allowed_cidr_blocks`
-- `security_group_ids` -> `security_group_rules.ingress_allowed_security_group_ids`
+- `cidr_blocks` -> `allowed_cidr_blocks`
+- `security_group_ids` -> `allowed_security_group_ids`
 
 The following variable defaults have been modified:
 
 - `cluster_family` -> default: `aurora-mysql8.0`
 - `engine_version` -> default: `8.0.mysql_aurora.3.02.2`
 - `iam_database_authentication_enabled` -> default: `true`
+- `instance_count` -> default: `2`
 - `tags` -> default: `{}`
 - `username` -> default: `root`
 
@@ -34,7 +35,7 @@ By default, all aurora cluster instances will be deployed using the same setting
 
 All module versions before `v1.0.0` deployed the `aws_rds_cluster_instance` resource using a count. Because Terraform uses parallelism by default, using a single resource with a loop results in downtime when modifying certain variables. To mitigate this issue, a `first` `aws_rds_cluster_instance` resource is created and when creating two or more instances a `rest` `aws_rds_cluster_instance` resource with a count is created to ensure a single instance always stays available during modification.
 
-To ensures that the instances will not be recreated by Terraform when upgrading to this version, move the resources to their new locations in the state. Create a `moved.tf` file in your workspace and add the following for each `aws_rds_cluster_instance` resource instance (assuming your module is called `aurora`):
+Move the resources to their new locations in the state. Create a `moved.tf` file in your workspace and add the following for each `aws_rds_cluster_instance` resource instance (assuming your module is called `aurora`):
 
 ```hcl
 moved {
@@ -52,3 +53,5 @@ moved {
   to   = module.aurora.aws_rds_cluster_instance.rest[1]
 }
 ```
+
+Note: This will still result in a redeploy of the first instance since we modifified the identifier from `count.index` to `count.index + 1`. To ensure that instance names start with `1` instead of `0`. This makes it easier to overwrite instance settings using `instance_config`, because using e.g. `1` as an identifier really means the first cluster instance in this case and not the second cluster instance.

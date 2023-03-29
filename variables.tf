@@ -1,3 +1,15 @@
+variable "allowed_cidr_blocks" {
+  type        = list(string)
+  default     = null
+  description = "List of CIDR blocks to add to the cluster security group that should be allowed access to the Aurora cluster"
+}
+
+variable "allowed_security_group_ids" {
+  type        = list(string)
+  default     = []
+  description = "List of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluste"
+}
+
 variable "allow_major_version_upgrade" {
   description = "Enable to allow major engine version upgrades when changing engine versions"
   type        = bool
@@ -229,15 +241,6 @@ variable "publicly_accessible" {
   type        = string
   default     = false
   description = "Control if instances in cluster are publicly accessible"
-}
-
-variable "security_group_rules" {
-  description = "Map of security group rules to add to the cluster security group created"
-  type = object({
-    ingress_allowed_cidr_blocks        = optional(list(string), null)
-    ingress_allowed_security_group_ids = optional(list(string), [])
-  })
-  default = null
 }
 
 variable "snapshot_identifier" {
