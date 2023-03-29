@@ -225,7 +225,7 @@ resource "aws_security_group" "default" {
 resource "aws_security_group_rule" "ingress_cidrs" {
   count = var.allowed_cidr_blocks != null ? 1 : 0
 
-  cidr_blocks       = var.security_group_rules.ingress_allowed_cidr_blocks
+  cidr_blocks       = var.allowed_cidr_blocks
   description       = "Aurora ingress"
   from_port         = aws_rds_cluster.default.port
   protocol          = "tcp"
