@@ -76,9 +76,9 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | Identifier of the final snapshot to create before deleting the cluster | `string` | `null` | no |
 | <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `true` | no |
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A list of IAM Role ARNs to associate with the cluster | `list(string)` | `null` | no |
-| <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances. Not applicable for serverless engine\_mode | `string` | `"db.r5.large"` | no |
+| <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`) | `string` | `"db.r5.large"` | no |
 | <a name="input_instance_config"></a> [instance\_config](#input\_instance\_config) | Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number | <pre>map(object({<br>    instance_class = optional(string, null)<br>    promotion_tier = optional(number, null)<br>  }))</pre> | `null` | no |
-| <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach. Not applicable for serverless engine\_mode | `number` | `1` | no |
+| <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach (not used when `engine_mode` set to `serverless`) | `number` | `2` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The KMS key ID used for the storage encryption | `string` | `null` | no |
 | <a name="input_max_capacity"></a> [max\_capacity](#input\_max\_capacity) | The maximum capacity of the serverless cluster | `string` | `8` | no |
 | <a name="input_min_capacity"></a> [min\_capacity](#input\_min\_capacity) | The minimum capacity of the serverless cluster | `string` | `1` | no |
