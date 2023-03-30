@@ -5,6 +5,20 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.0 - 2023-03-30
+
+### What's Changed
+
+#### 🚀 Features
+
+- breaking: add support for: specifying endpoints and instance settings | rename variables | improve default settings (#37) @shoekstra @marwinbaumannsbp
+
+#### 📖 Documentation
+
+- breaking: add support for: specifying endpoints and instance settings | rename variables | improve default settings (#37) @shoekstra @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-aurora/compare/v0.6.0...v1.0.0
+
 ## v0.6.0 - 2023-03-21
 
 ### What's Changed
