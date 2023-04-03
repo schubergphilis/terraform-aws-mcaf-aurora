@@ -23,7 +23,7 @@ repos:
       - id: terraform_docs
       - id: terraform_validate
   - repo: https://github.com/bridgecrewio/checkov.git
-    rev: 2.3.34 # checkov-action v12.2150.0 == checkov 2.3.34 - Keep this config in sync with .github/workflows/terraform-validation.yml
+    rev: 2.3.34
     hooks:
       - id: checkov
         verbose: false
