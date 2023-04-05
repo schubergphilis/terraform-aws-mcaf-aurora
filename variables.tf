@@ -161,10 +161,11 @@ variable "instance_class" {
 variable "instance_config" {
   description = "Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number"
   type = map(object({
+    identifier     = optional(string, null)
     instance_class = optional(string, null)
     promotion_tier = optional(number, null)
   }))
-  default = null
+  default = {}
 }
 
 variable "instance_count" {

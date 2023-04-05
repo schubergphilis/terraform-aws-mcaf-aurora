@@ -1,6 +1,9 @@
 locals {
   instance_class      = var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class
+  is_serverless       = var.engine_mode == "serverless"
   skip_final_snapshot = var.final_snapshot_identifier == null
+
+  instances = { for i in range(var.instance_count) : i => try(var.instance_config[i], {}) }
 }
 
 data "aws_subnet" "selected" {
@@ -42,7 +45,7 @@ resource "aws_rds_cluster" "default" {
   vpc_security_group_ids              = [aws_security_group.default.id]
 
   dynamic "scaling_configuration" {
-    for_each = var.engine_mode == "serverless" ? { create : null } : {}
+    for_each = local.is_serverless ? { create : null } : {}
 
     content {
       auto_pause               = var.auto_pause
@@ -68,7 +71,7 @@ resource "aws_rds_cluster" "default" {
 ################################################################################
 
 resource "aws_rds_cluster_endpoint" "default" {
-  for_each = { for identifier, settings in var.endpoints : identifier => settings if var.engine_mode != "serverless" }
+  for_each = { for identifier, settings in var.endpoints : identifier => settings if !local.is_serverless }
 
   cluster_endpoint_identifier = lower(each.key)
   cluster_identifier          = aws_rds_cluster.default.id
@@ -91,7 +94,7 @@ Because Terraform uses parallelism by default, using 1 resource with a loop resu
 therefore a main cluster instance resource is created and additional cluster instance resources when applicable to ensure 1 instance is always available.
 */
 resource "aws_rds_cluster_instance" "first" {
-  count = var.engine_mode == "serverless" ? 0 : 1
+  for_each = { for k in slice(keys(local.instances), 0, 1) : k => local.instances[k] if !local.is_serverless }
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
@@ -101,20 +104,20 @@ resource "aws_rds_cluster_instance" "first" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.name}-${count.index + 1}"
-  instance_class                        = try(var.instance_config[count.index + 1]["instance_class"], null) != null ? var.instance_config[count.index + 1]["instance_class"] : local.instance_class
+  identifier                            = try(each.value.identifier, "${var.name}-${each.key}")
+  instance_class                        = try(each.value.instance_class, null) != null ? each.value.instance_class : local.instance_class
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
-  promotion_tier                        = try(var.instance_config[count.index + 1]["promotion_tier"], null)
+  promotion_tier                        = try(each.value.promotion_tier, null)
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
 }
 
 resource "aws_rds_cluster_instance" "rest" {
-  count = var.engine_mode == "serverless" ? 0 : var.instance_count - 1
+  for_each = { for k in slice(keys(local.instances), 1, length(local.instances)) : k => local.instances[k] if !local.is_serverless }
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
@@ -124,14 +127,14 @@ resource "aws_rds_cluster_instance" "rest" {
   db_subnet_group_name                  = aws_db_subnet_group.default.name
   engine                                = var.engine
   engine_version                        = var.engine_version
-  identifier                            = "${var.name}-${count.index + 2}"
-  instance_class                        = try(var.instance_config[count.index + 2]["instance_class"], null) != null ? var.instance_config[count.index + 2]["instance_class"] : local.instance_class
+  identifier                            = try(each.value.identifier, "${var.name}-${each.key}")
+  instance_class                        = try(each.value.instance_class, null) != null ? each.value.instance_class : local.instance_class
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
   performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
-  promotion_tier                        = try(var.instance_config[count.index + 2]["promotion_tier"], null)
+  promotion_tier                        = try(each.value.promotion_tier, null)
   publicly_accessible                   = var.publicly_accessible
   tags                                  = var.tags
 
