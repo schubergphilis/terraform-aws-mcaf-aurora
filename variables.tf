@@ -176,7 +176,31 @@ variable "instance_count" {
 variable "kms_key_id" {
   type        = string
   default     = null
-  description = "The KMS key ID used for the storage encryption"
+  description = "ID of KMS key to encrypt storage and performance insights data"
+}
+
+variable "manage_master_user" {
+  description = "Set to false to provide a custom password using `master_password`"
+  type        = bool
+  default     = true
+}
+
+variable "master_password" {
+  type        = string
+  default     = null
+  description = "Password for the master DB user, must set `manage_master_user` to false if specifying a custom password"
+}
+
+variable "master_user_secret_kms_key_id" {
+  description = "ID of KMS key to encrypt the master user Secrets Manager secret"
+  type        = string
+  default     = null
+}
+
+variable "master_username" {
+  type        = string
+  default     = "root"
+  description = "Username for the master DB user"
 }
 
 variable "max_capacity" {
@@ -200,11 +224,6 @@ variable "monitoring_interval" {
 variable "name" {
   type        = string
   description = "The name for the Aurora Cluster"
-}
-
-variable "password" {
-  type        = string
-  description = "Password for the master DB user"
 }
 
 variable "performance_insights" {
@@ -270,10 +289,4 @@ variable "timeout_action" {
   type        = string
   default     = "RollbackCapacityChange"
   description = "The action to take when the timeout is reached"
-}
-
-variable "username" {
-  type        = string
-  default     = "root"
-  description = "Username for the master DB user"
 }
