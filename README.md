@@ -18,13 +18,13 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.12.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.62.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.12.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.62.0 |
 
 ## Modules
 
@@ -53,7 +53,6 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | The name for the Aurora Cluster | `string` | n/a | yes |
-| <a name="input_password"></a> [password](#input\_password) | Password for the master DB user | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to deploy Aurora in | `list(string)` | n/a | yes |
 | <a name="input_allow_major_version_upgrade"></a> [allow\_major\_version\_upgrade](#input\_allow\_major\_version\_upgrade) | Enable to allow major engine version upgrades when changing engine versions | `bool` | `false` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | List of CIDR blocks to add to the cluster security group that should be allowed access to the Aurora cluster | `list(string)` | `null` | no |
@@ -79,7 +78,11 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`) | `string` | `"db.r5.large"` | no |
 | <a name="input_instance_config"></a> [instance\_config](#input\_instance\_config) | Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number | <pre>map(object({<br>    instance_class = optional(string, null)<br>    promotion_tier = optional(number, null)<br>  }))</pre> | `null` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach (not used when `engine_mode` set to `serverless`) | `number` | `2` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | The KMS key ID used for the storage encryption | `string` | `null` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ID of KMS key to encrypt storage and performance insights data | `string` | `null` | no |
+| <a name="input_manage_master_user"></a> [manage\_master\_user](#input\_manage\_master\_user) | Set to false to provide a custom password using `master_password` | `bool` | `true` | no |
+| <a name="input_master_password"></a> [master\_password](#input\_master\_password) | Password for the master DB user, must set `manage_master_user` to false if specifying a custom password | `string` | `null` | no |
+| <a name="input_master_user_secret_kms_key_id"></a> [master\_user\_secret\_kms\_key\_id](#input\_master\_user\_secret\_kms\_key\_id) | ID of KMS key to encrypt the master user Secrets Manager secret | `string` | `null` | no |
+| <a name="input_master_username"></a> [master\_username](#input\_master\_username) | Username for the master DB user | `string` | `"root"` | no |
 | <a name="input_max_capacity"></a> [max\_capacity](#input\_max\_capacity) | The maximum capacity of the serverless cluster | `string` | `8` | no |
 | <a name="input_min_capacity"></a> [min\_capacity](#input\_min\_capacity) | The minimum capacity of the serverless cluster | `string` | `1` | no |
 | <a name="input_monitoring_interval"></a> [monitoring\_interval](#input\_monitoring\_interval) | The interval (seconds) for collecting enhanced monitoring metrics | `string` | `null` | no |
@@ -93,7 +96,6 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether the DB cluster is encrypted | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A mapping of tags to assign to the bucket | `map(string)` | `{}` | no |
 | <a name="input_timeout_action"></a> [timeout\_action](#input\_timeout\_action) | The action to take when the timeout is reached | `string` | `"RollbackCapacityChange"` | no |
-| <a name="input_username"></a> [username](#input\_username) | Username for the master DB user | `string` | `"root"` | no |
 
 ## Outputs
 
@@ -106,10 +108,11 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | DNS address of the RDS instance |
 | <a name="output_id"></a> [id](#output\_id) | ID of the Aurora cluster |
 | <a name="output_instance_ids"></a> [instance\_ids](#output\_instance\_ids) | Aurora instances IDs |
+| <a name="output_master_user_secret"></a> [master\_user\_secret](#output\_master\_user\_secret) | The generated database master user secret when `var.manage_master_user` is set to `true` |
+| <a name="output_master_username"></a> [master\_username](#output\_master\_username) | Username for the master DB user |
 | <a name="output_port"></a> [port](#output\_port) | Port on which the DB accepts connections |
 | <a name="output_reader_endpoint"></a> [reader\_endpoint](#output\_reader\_endpoint) | A load-balanced read-only endpoint for the Aurora cluster |
 | <a name="output_security_group_id"></a> [security\_group\_id](#output\_security\_group\_id) | The securitiry group id that is attached to the Aurora cluster |
-| <a name="output_username"></a> [username](#output\_username) | Username for the master DB user |
 <!-- END_TF_DOCS -->
 
 ## Licensing
