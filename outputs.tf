@@ -33,6 +33,16 @@ output "instance_ids" {
   description = "Aurora instances IDs"
 }
 
+output "master_username" {
+  value       = var.master_username
+  description = "Username for the master DB user"
+}
+
+output "master_user_secret" {
+  description = "The generated database master user secret when `var.manage_master_user_password` is set to `true`"
+  value       = try(aws_rds_cluster.default.master_user_secret, null)
+}
+
 output "port" {
   value       = aws_rds_cluster.default.port
   description = "Port on which the DB accepts connections"
@@ -46,9 +56,4 @@ output "reader_endpoint" {
 output "security_group_id" {
   value       = aws_security_group.default.id
   description = "The securitiry group id that is attached to the Aurora cluster"
-}
-
-output "username" {
-  value       = var.username
-  description = "Username for the master DB user"
 }

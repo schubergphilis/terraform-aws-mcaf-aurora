@@ -2,6 +2,38 @@
 
 This document captures breaking changes.
 
+## Upgrading to v2.0.0
+
+### Variables
+
+The following variables have been renamed:
+
+- `password` -> `master_password`
+- `username` -> `master_username`
+
+The following variable defaults have been modified:
+
+- `master_password` -> default: `null`
+
+The following new variables have been introduced:
+
+- `manage_master_user_password`
+- `master_user_secret_kms_key_id`
+
+The following outputs have been renamed:
+
+- `username` -> `master_username`
+
+The following new outputs have been introduced:
+
+- `master_user_secret`
+
+### Behaviour
+
+Amazon RDS now supports [integration with AWS Secrets Manager to manage the master user password](https://aws.amazon.com/about-aws/whats-new/2022/12/amazon-rds-integration-aws-secrets-manager/). With this feature, RDS fully manages the master password and stores it in AWS Secrets Manager, this includes regular and automatic password rotations out of the box. All module versions as of `v2.0.0` have enabled this feature by default. The feature is controllable via `var.manage_master_user_password`.
+
+You can update an existing cluster to use Secrets Manager by removing the `master_password` attribute.
+
 ## Upgrading to v1.0.0
 
 ### Variables

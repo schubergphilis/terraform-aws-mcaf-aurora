@@ -9,14 +9,9 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
-resource "random_password" "root_password" {
-  length  = "20"
-  special = false
-}
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.0"
+  version = "~> 4.0"
 
   name             = "example"
   azs              = local.azs
@@ -33,7 +28,6 @@ module "aurora" {
   allowed_cidr_blocks = [local.vpc_cidr]
   engine_mode         = "provisioned"
   instance_count      = 3
-  password            = random_password.root_password.result
   subnet_ids          = module.vpc.private_subnets
 
   endpoints = {

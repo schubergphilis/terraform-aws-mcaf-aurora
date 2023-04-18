@@ -31,8 +31,10 @@ resource "aws_rds_cluster" "default" {
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   iam_roles                           = var.iam_roles
   kms_key_id                          = var.kms_key_id
-  master_password                     = var.password
-  master_username                     = var.username
+  manage_master_user_password         = var.manage_master_user_password ? var.manage_master_user_password : null
+  master_password                     = var.master_password
+  master_user_secret_kms_key_id       = var.master_user_secret_kms_key_id
+  master_username                     = var.master_username
   preferred_backup_window             = var.preferred_backup_window
   preferred_maintenance_window        = var.preferred_maintenance_window
   skip_final_snapshot                 = local.skip_final_snapshot
