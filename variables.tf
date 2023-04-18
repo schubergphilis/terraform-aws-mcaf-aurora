@@ -176,11 +176,11 @@ variable "instance_count" {
 variable "kms_key_id" {
   type        = string
   default     = null
-  description = "The KMS key ID used for the storage and performance insights encryption"
+  description = "ID of KMS key to encrypt storage and performance insights data"
 }
 
-variable "manage_master_user_password" {
-  description = "Set to false to be able to provide a custom password using `master_password`"
+variable "manage_master_user" {
+  description = "Set to false to provide a custom password using `master_password`"
   type        = bool
   default     = true
 }
@@ -188,11 +188,11 @@ variable "manage_master_user_password" {
 variable "master_password" {
   type        = string
   default     = null
-  description = "Password for the master DB user. Not recommended to use as this value will be stored in the state file. Set `manage_master_user_password` to false when providing a custom password"
+  description = "Password for the master DB user, must set `manage_master_user` to false if specifying a custom password"
 }
 
 variable "master_user_secret_kms_key_id" {
-  description = "The KMS key ID used for encryption of the master user secrets manager secret"
+  description = "ID of KMS key to encrypt the master user Secrets Manager secret"
   type        = string
   default     = null
 }

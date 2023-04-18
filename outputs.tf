@@ -39,7 +39,7 @@ output "master_username" {
 }
 
 output "master_user_secret" {
-  description = "The generated database master user secret when `var.manage_master_user_password` is set to `true`"
+  description = "The generated database master user secret when `var.manage_master_user` is set to `true`"
   value       = try(aws_rds_cluster.default.master_user_secret, null)
 }
 

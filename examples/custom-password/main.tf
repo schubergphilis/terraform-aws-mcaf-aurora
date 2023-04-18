@@ -29,9 +29,9 @@ module "vpc" {
 module "aurora" {
   source = "../.."
 
-  name                        = "example"
-  engine_mode                 = "provisioned"
-  manage_master_user_password = false
-  master_password             = random_password.root_password.result
-  subnet_ids                  = module.vpc.private_subnets
+  name               = "example"
+  engine_mode        = "provisioned"
+  manage_master_user = false
+  master_password    = random_password.root_password.result
+  subnet_ids         = module.vpc.private_subnets
 }
