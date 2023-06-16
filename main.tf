@@ -70,13 +70,13 @@ resource "aws_rds_cluster" "default" {
 ################################################################################
 
 resource "aws_rds_cluster_endpoint" "default" {
-  for_each = { for identifier, settings in var.endpoints : identifier => settings if var.engine_mode != "serverless" }
+  for_each = { for name, settings in var.endpoints : name => settings if var.engine_mode != "serverless" }
 
-  cluster_endpoint_identifier = lower(each.key)
+  cluster_endpoint_identifier = lower("${aws_rds_cluster.default.id}-${each.key}")
   cluster_identifier          = aws_rds_cluster.default.id
   custom_endpoint_type        = each.value.type
-  excluded_members            = length(var.endpoints.reader.excluded_members) == 0 ? null : [for member in each.value.excluded_members : "${var.name}-${member}"]
-  static_members              = length(var.endpoints.reader.static_members) == 0 ? null : [for member in each.value.static_members : "${var.name}-${member}"]
+  excluded_members            = length(each.value.excluded_members) == 0 ? null : [for member in each.value.excluded_members : "${var.name}-${member}"]
+  static_members              = length(each.value.static_members) == 0 ? null : [for member in each.value.static_members : "${var.name}-${member}"]
   tags                        = var.tags
 
   depends_on = [
