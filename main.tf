@@ -80,7 +80,8 @@ resource "aws_rds_cluster_endpoint" "default" {
   tags                        = var.tags
 
   depends_on = [
-    aws_rds_cluster.default
+    aws_rds_cluster_instance.first,
+    aws_rds_cluster_instance.rest,
   ]
 }
 
