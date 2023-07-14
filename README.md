@@ -104,6 +104,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="output_arn"></a> [arn](#output\_arn) | ARN of the Aurora cluster |
 | <a name="output_cluster_identifier"></a> [cluster\_identifier](#output\_cluster\_identifier) | The RDS Cluster Identifier |
 | <a name="output_cluster_resource_id"></a> [cluster\_resource\_id](#output\_cluster\_resource\_id) | The RDS Cluster Resource ID |
+| <a name="output_custom_endpoints"></a> [custom\_endpoints](#output\_custom\_endpoints) | The DNS addresses of the custom endpoints. |
 | <a name="output_database"></a> [database](#output\_database) | Name of the first database created when the cluster was created |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | DNS address of the RDS instance |
 | <a name="output_id"></a> [id](#output\_id) | ID of the Aurora cluster |
