@@ -54,30 +54,35 @@ This can be changed by updating `var.instance_count`. By default all instances u
 |------|-------------|------|---------|:--------:|
 | <a name="input_name"></a> [name](#input\_name) | The name for the Aurora Cluster | `string` | n/a | yes |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | List of subnet IDs to deploy Aurora in | `list(string)` | n/a | yes |
+| <a name="input_allocated_storage"></a> [allocated\_storage](#input\_allocated\_storage) | The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. (Required for Multi-AZ DB cluster) | `number` | `null` | no |
 | <a name="input_allow_major_version_upgrade"></a> [allow\_major\_version\_upgrade](#input\_allow\_major\_version\_upgrade) | Enable to allow major engine version upgrades when changing engine versions | `bool` | `false` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | List of CIDR blocks to add to the cluster security group that should be allowed access to the Aurora cluster | `list(string)` | `null` | no |
-| <a name="input_allowed_security_group_ids"></a> [allowed\_security\_group\_ids](#input\_allowed\_security\_group\_ids) | List of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluste | `list(string)` | `[]` | no |
+| <a name="input_allowed_security_group_ids"></a> [allowed\_security\_group\_ids](#input\_allowed\_security\_group\_ids) | List of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluster | `list(string)` | `[]` | no |
 | <a name="input_apply_immediately"></a> [apply\_immediately](#input\_apply\_immediately) | Specifies whether any cluster modifications are applied immediately | `bool` | `true` | no |
 | <a name="input_auto_minor_version_upgrade"></a> [auto\_minor\_version\_upgrade](#input\_auto\_minor\_version\_upgrade) | Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window | `bool` | `true` | no |
 | <a name="input_auto_pause"></a> [auto\_pause](#input\_auto\_pause) | Whether to enable automatic pause | `bool` | `true` | no |
+| <a name="input_backtrack_window"></a> [backtrack\_window](#input\_backtrack\_window) | The target backtrack window, in seconds. Only available for `aurora` and `aurora-mysql` engines. To disable backtracking, set this value to 0. Must be between 0 and 259200 (72 hours) | `number` | `null` | no |
 | <a name="input_backup_retention_period"></a> [backup\_retention\_period](#input\_backup\_retention\_period) | The days to retain backups for | `number` | `7` | no |
+| <a name="input_ca_cert_identifier"></a> [ca\_cert\_identifier](#input\_ca\_cert\_identifier) | Identifier of the CA certificate for the DB instance | `string` | `"rds-ca-rsa2048-g1"` | no |
 | <a name="input_cluster_family"></a> [cluster\_family](#input\_cluster\_family) | The family of the DB cluster parameter group | `string` | `"aurora-mysql8.0"` | no |
 | <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | A list of cluster DB parameters to apply | <pre>list(object({<br>    apply_method = optional(string, "immediate")<br>    name         = string<br>    value        = string<br>  }))</pre> | <pre>[<br>  {<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  }<br>]</pre> | no |
 | <a name="input_database"></a> [database](#input\_database) | The name of the first database to be created when the cluster is created | `string` | `null` | no |
 | <a name="input_database_parameters"></a> [database\_parameters](#input\_database\_parameters) | A list of instance DB parameters to apply | <pre>list(object({<br>    apply_method = optional(string, "immediate")<br>    name         = string<br>    value        = string<br>  }))</pre> | `null` | no |
+| <a name="input_db_cluster_instance_class"></a> [db\_cluster\_instance\_class](#input\_db\_cluster\_instance\_class) | The compute and memory capacity of each DB instance in the Multi-AZ DB cluster. Only set this variable if you are deploying a Multi-AZ DB cluster. (Required for Multi-AZ DB cluster) | `string` | `null` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | A boolean indicating if the DB instance should have deletion protection enable | `bool` | `true` | no |
 | <a name="input_enable_http_endpoint"></a> [enable\_http\_endpoint](#input\_enable\_http\_endpoint) | Enable Aurora Serverless HTTP endpoint (Data API) | `bool` | `false` | no |
 | <a name="input_enabled_cloudwatch_logs_exports"></a> [enabled\_cloudwatch\_logs\_exports](#input\_enabled\_cloudwatch\_logs\_exports) | List of log types to export to cloudwatch | `list(string)` | `null` | no |
 | <a name="input_endpoints"></a> [endpoints](#input\_endpoints) | A map of additional cluster endpoints to be created | <pre>map(object({<br>    excluded_members = optional(list(string), [])<br>    static_members   = optional(list(string), [])<br>    type             = string<br>  }))</pre> | `{}` | no |
 | <a name="input_engine"></a> [engine](#input\_engine) | The engine type of the Aurora cluster | `string` | `"aurora-mysql"` | no |
-| <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the Aurora cluster | `string` | `"serverless"` | no |
+| <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the Aurora cluster | `string` | `"provisioned"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | The engine version of the Aurora cluster | `string` | `"8.0.mysql_aurora.3.02.2"` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | Identifier of the final snapshot to create before deleting the cluster | `string` | `null` | no |
 | <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `true` | no |
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A list of IAM Role ARNs to associate with the cluster | `list(string)` | `null` | no |
-| <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`) | `string` | `"db.r5.large"` | no |
+| <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`) | `string` | `null` | no |
 | <a name="input_instance_config"></a> [instance\_config](#input\_instance\_config) | Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number | <pre>map(object({<br>    instance_class = optional(string, null)<br>    promotion_tier = optional(number, null)<br>  }))</pre> | `null` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach (not used when `engine_mode` set to `serverless`) | `number` | `2` | no |
+| <a name="input_iops"></a> [iops](#input\_iops) | The amount of Provisioned IOPS to be initially allocated for each DB instance. (Required for Multi-AZ DB cluster) | `number` | `null` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ID of KMS key to encrypt storage and performance insights data | `string` | `null` | no |
 | <a name="input_manage_master_user"></a> [manage\_master\_user](#input\_manage\_master\_user) | Set to false to provide a custom password using `master_password` | `bool` | `true` | no |
 | <a name="input_master_password"></a> [master\_password](#input\_master\_password) | Password for the master DB user, must set `manage_master_user` to false if specifying a custom password | `string` | `null` | no |
@@ -94,6 +99,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Control if instances in cluster are publicly accessible | `string` | `false` | no |
 | <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | Database snapshot identifier to create the database from | `string` | `null` | no |
 | <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether the DB cluster is encrypted | `bool` | `true` | no |
+| <a name="input_storage_type"></a> [storage\_type](#input\_storage\_type) | Specifies the storage type to be associated with the DB cluster. (Required for Multi-AZ DB cluster) | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | A mapping of tags to assign to the bucket | `map(string)` | `{}` | no |
 | <a name="input_timeout_action"></a> [timeout\_action](#input\_timeout\_action) | The action to take when the timeout is reached | `string` | `"RollbackCapacityChange"` | no |
 

@@ -24,7 +24,21 @@ module "vpc" {
 module "aurora" {
   source = "../.."
 
-  name           = "example"
-  instance_class = "db.r6g.large"
-  subnet_ids     = module.vpc.private_subnets
+  name                = "example"
+  allowed_cidr_blocks = [local.vpc_cidr]
+  instance_class      = "db.r6g.large"
+  instance_count      = 3
+  subnet_ids          = module.vpc.private_subnets
+
+  endpoints = {
+    reader = {
+      type           = "READER"
+      static_members = [3]
+    }
+  }
+
+  instance_config = {
+    2 = { promotion_tier = 10 }
+    3 = { promotion_tier = 15, instance_class = "db.t3.medium" }
+  }
 }

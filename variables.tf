@@ -1,3 +1,9 @@
+variable "allocated_storage" {
+  type        = number
+  default     = null
+  description = "The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. (Required for Multi-AZ DB cluster)"
+}
+
 variable "allowed_cidr_blocks" {
   type        = list(string)
   default     = null
@@ -7,19 +13,13 @@ variable "allowed_cidr_blocks" {
 variable "allowed_security_group_ids" {
   type        = list(string)
   default     = []
-  description = "List of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluste"
+  description = "List of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluster"
 }
 
 variable "allow_major_version_upgrade" {
-  description = "Enable to allow major engine version upgrades when changing engine versions"
   type        = bool
   default     = false
-}
-
-variable "auto_minor_version_upgrade" {
-  description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window`"
-  type        = bool
-  default     = true
+  description = "Enable to allow major engine version upgrades when changing engine versions"
 }
 
 variable "apply_immediately" {
@@ -28,16 +28,40 @@ variable "apply_immediately" {
   description = "Specifies whether any cluster modifications are applied immediately"
 }
 
+variable "auto_minor_version_upgrade" {
+  type        = bool
+  default     = true
+  description = "Indicates that minor engine upgrades will be applied automatically to the DB instance during the maintenance window`"
+}
+
 variable "auto_pause" {
   type        = bool
   default     = true
   description = "Whether to enable automatic pause"
 }
 
+variable "backtrack_window" {
+  type        = number
+  default     = null
+  description = "The target backtrack window, in seconds. Only available for `aurora` and `aurora-mysql` engines. To disable backtracking, set this value to 0. Must be between 0 and 259200 (72 hours)"
+}
+
 variable "backup_retention_period" {
   type        = number
   default     = 7
   description = "The days to retain backups for"
+}
+
+variable "ca_cert_identifier" {
+  type        = string
+  default     = "rds-ca-rsa2048-g1"
+  description = "Identifier of the CA certificate for the DB instance"
+
+
+  validation {
+    condition     = var.ca_cert_identifier != null ? contains(["rds-ca-2019", "rds-ca-rsa2048-g1", "rds-ca-rsa4096-g1", "rds-ca-ecc384-g1"], var.ca_cert_identifier) : true
+    error_message = "Allowed values for ca_cert_identifier are \"rds-ca-2019\", \"rds-ca-rsa2048-g1\", \"rds-ca-rsa4096-g1\", \"rds-ca-ecc384-g1\"."
+  }
 }
 
 variable "cluster_family" {
@@ -78,6 +102,12 @@ variable "database_parameters" {
   description = "A list of instance DB parameters to apply"
 }
 
+variable "db_cluster_instance_class" {
+  type        = string
+  default     = null
+  description = "The compute and memory capacity of each DB instance in the Multi-AZ DB cluster. Only set this variable if you are deploying a Multi-AZ DB cluster. (Required for Multi-AZ DB cluster)"
+}
+
 variable "deletion_protection" {
   type        = bool
   default     = true
@@ -97,13 +127,13 @@ variable "enable_http_endpoint" {
 }
 
 variable "endpoints" {
-  description = "A map of additional cluster endpoints to be created"
   type = map(object({
     excluded_members = optional(list(string), [])
     static_members   = optional(list(string), [])
     type             = string
   }))
-  default = {}
+  default     = {}
+  description = "A map of additional cluster endpoints to be created"
 }
 
 variable "engine" {
@@ -119,7 +149,7 @@ variable "engine" {
 
 variable "engine_mode" {
   type        = string
-  default     = "serverless"
+  default     = "provisioned"
   description = "The engine mode of the Aurora cluster"
 
   validation {
@@ -154,23 +184,29 @@ variable "iam_roles" {
 
 variable "instance_class" {
   type        = string
-  default     = "db.r5.large"
+  default     = null
   description = "The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`)"
 }
 
 variable "instance_config" {
-  description = "Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number"
   type = map(object({
     instance_class = optional(string, null)
     promotion_tier = optional(number, null)
   }))
-  default = null
+  default     = null
+  description = "Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number"
 }
 
 variable "instance_count" {
   type        = number
   default     = 2
   description = "The number of RDS instances to attach (not used when `engine_mode` set to `serverless`)"
+}
+
+variable "iops" {
+  type        = number
+  default     = null
+  description = "The amount of Provisioned IOPS to be initially allocated for each DB instance. (Required for Multi-AZ DB cluster)"
 }
 
 variable "kms_key_id" {
@@ -180,9 +216,9 @@ variable "kms_key_id" {
 }
 
 variable "manage_master_user" {
-  description = "Set to false to provide a custom password using `master_password`"
   type        = bool
   default     = true
+  description = "Set to false to provide a custom password using `master_password`"
 }
 
 variable "master_password" {
@@ -192,9 +228,9 @@ variable "master_password" {
 }
 
 variable "master_user_secret_kms_key_id" {
-  description = "ID of KMS key to encrypt the master user Secrets Manager secret"
   type        = string
   default     = null
+  description = "ID of KMS key to encrypt the master user Secrets Manager secret"
 }
 
 variable "master_username" {
@@ -272,6 +308,17 @@ variable "storage_encrypted" {
   type        = bool
   default     = true
   description = "Specifies whether the DB cluster is encrypted"
+}
+
+variable "storage_type" {
+  type        = string
+  default     = null
+  description = "Specifies the storage type to be associated with the DB cluster. (Required for Multi-AZ DB cluster)`"
+
+  validation {
+    condition     = var.storage_type != null ? contains(["io1", "aurora-iopt1", ""], var.storage_type) : true
+    error_message = "Allowed values for storage_type are \"io1\", \"aurora-iopt1\"."
+  }
 }
 
 variable "subnet_ids" {

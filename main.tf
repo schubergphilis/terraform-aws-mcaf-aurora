@@ -1,4 +1,5 @@
 locals {
+  backtrack_window    = (var.engine == "aurora" || var.engine == "aurora-mysql") && (var.engine_mode != "serverless" || var.engine_mode != "serverlessv2") ? var.backtrack_window : null
   instance_class      = var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class
   skip_final_snapshot = var.final_snapshot_identifier == null
 }
@@ -13,14 +14,17 @@ data "aws_subnet" "selected" {
 
 resource "aws_rds_cluster" "default" {
   #checkov:skip=CKV2_AWS_8: Ensuring that RDS clusters have an AWS Backup backup plan is not the responsibility of this module
+  allocated_storage                   = var.allocated_storage
   allow_major_version_upgrade         = var.allow_major_version_upgrade
   apply_immediately                   = var.apply_immediately
   backup_retention_period             = var.backup_retention_period
+  backtrack_window                    = local.backtrack_window
   cluster_identifier                  = var.name
   copy_tags_to_snapshot               = true
   database_name                       = var.database
   db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
   db_subnet_group_name                = aws_db_subnet_group.default.name
+  db_cluster_instance_class           = var.db_cluster_instance_class
   deletion_protection                 = var.deletion_protection
   enable_http_endpoint                = var.enable_http_endpoint
   enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
@@ -30,6 +34,7 @@ resource "aws_rds_cluster" "default" {
   final_snapshot_identifier           = var.final_snapshot_identifier
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   iam_roles                           = var.iam_roles
+  iops                                = var.iops
   kms_key_id                          = var.kms_key_id
   manage_master_user_password         = var.manage_master_user ? var.manage_master_user : null
   master_password                     = var.master_password
@@ -42,6 +47,7 @@ resource "aws_rds_cluster" "default" {
   storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
   tags                                = var.tags
   vpc_security_group_ids              = [aws_security_group.default.id]
+  storage_type                        = var.storage_type
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
@@ -97,6 +103,7 @@ resource "aws_rds_cluster_instance" "first" {
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  ca_cert_identifier                    = var.ca_cert_identifier
   cluster_identifier                    = aws_rds_cluster.default.id
   copy_tags_to_snapshot                 = true
   db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
