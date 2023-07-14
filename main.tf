@@ -127,6 +127,7 @@ resource "aws_rds_cluster_instance" "rest" {
 
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
+  ca_cert_identifier                    = var.ca_cert_identifier
   cluster_identifier                    = aws_rds_cluster.default.id
   copy_tags_to_snapshot                 = true
   db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)

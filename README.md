@@ -10,7 +10,7 @@ Default behaviour of this module is to create a two-node cluster, a writer and a
 
 This can be changed by updating `var.instance_count`. By default all instances use the same settings. To configure settings per instance, use `var.instance_config`.
 
-**NOTE**: keys in `var.instance_count` start from `1`. See the [full example](https://github.com/schubergphilis/terraform-aws-mcaf-aurora/blob/master/examples/full) to see it used.
+**NOTE**: keys in `var.instance_count` start from `1`. See the [endpoints-and-instance-config](https://github.com/schubergphilis/terraform-aws-mcaf-aurora/blob/master/examples/endpoints-and-instance-config) example to see it used.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
