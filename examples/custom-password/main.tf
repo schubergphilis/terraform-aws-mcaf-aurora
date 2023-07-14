@@ -30,7 +30,7 @@ module "aurora" {
   source = "../.."
 
   name               = "example"
-  engine_mode        = "provisioned"
+  instance_class     = "db.r6g.large"
   manage_master_user = false
   master_password    = random_password.root_password.result
   subnet_ids         = module.vpc.private_subnets
