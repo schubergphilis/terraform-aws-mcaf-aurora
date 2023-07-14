@@ -2,6 +2,16 @@
 
 This document captures breaking changes.
 
+## Upgrading to v3.0.0
+
+### Variables
+
+The following variable defaults have been modified:
+
+- `engine_mode` -> default: `provisioned` (previous: `serverless`)
+- `instance_class` -> default: `null` (previous: `db.r5.large`)
+- `ca_cert_identifier` -> default: `rds-ca-rsa2048-g1` (did not exist yet, previous: `rds-ca-2019`)
+
 ## Upgrading to v2.0.0
 
 ### Behaviour
