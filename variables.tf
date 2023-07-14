@@ -77,11 +77,17 @@ variable "cluster_parameters" {
     value        = string
   }))
   default = [{
-    name  = "character_set_server",
-    value = "utf8",
+    name         = "character_set_server",
+    value        = "utf8",
+    apply_method = "pending-reboot"
     }, {
-    name  = "character_set_client",
-    value = "utf8",
+    name         = "character_set_client",
+    value        = "utf8",
+    apply_method = "pending-reboot"
+    }, {
+    name         = "require_secure_transport",
+    value        = "ON",
+    apply_method = "immediate"
   }]
   description = "A list of cluster DB parameters to apply"
 }
