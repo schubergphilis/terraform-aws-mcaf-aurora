@@ -13,6 +13,11 @@ output "cluster_resource_id" {
   description = "The RDS Cluster Resource ID"
 }
 
+output "custom_endpoints" {
+  value       = { for k, v in aws_rds_cluster_endpoint.default : k => v.endpoint }
+  description = "The DNS addresses of the custom endpoints."
+}
+
 output "database" {
   value       = var.database
   description = "Name of the first database created when the cluster was created"
