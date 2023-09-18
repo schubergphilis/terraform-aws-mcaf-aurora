@@ -183,7 +183,7 @@ module "rds_enhanced_monitoring_role" {
 ################################################################################
 
 resource "aws_rds_cluster_parameter_group" "default" {
-  name        = var.name
+  name        = coalesce(var.parameter_group_name, var.name)
   description = "RDS default cluster parameter group"
   family      = var.cluster_family
   tags        = var.tags
@@ -210,7 +210,7 @@ resource "aws_rds_cluster_parameter_group" "default" {
 resource "aws_db_parameter_group" "default" {
   count = var.database_parameters != null ? 1 : 0
 
-  name        = "${var.name}-aurora"
+  name        = coalesce(var.parameter_group_name, "${var.name}-aurora")
   description = "RDS default database parameter group"
   family      = var.cluster_family
   tags        = var.tags
