@@ -197,6 +197,10 @@ resource "aws_rds_cluster_parameter_group" "default" {
       value        = parameter.value.value
     }
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 ################################################################################
@@ -219,6 +223,10 @@ resource "aws_db_parameter_group" "default" {
       name         = parameter.value.name
       value        = parameter.value.value
     }
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 
