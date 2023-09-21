@@ -5,6 +5,22 @@ All notable changes to this project will automatically be documented in this fil
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v3.3.0 - 2023-09-21
+
+### What's Changed
+
+#### 🚀 Features
+
+- security: solve latest checkov findings, modify behaviour of performance_insights and cloudwatch_logs_export (#52) @marwinbaumannsbp
+- feat: add the option to specify a custom parameter group name (#50) @marwinbaumannsbp
+
+#### 🐛 Bug Fixes
+
+- security: solve latest checkov findings, modify behaviour of performance_insights and cloudwatch_logs_export (#52) @marwinbaumannsbp
+- bug: do not create cluster parameter group if no cluster parameters are specified (#51) @marwinbaumannsbp
+
+**Full Changelog**: https://github.com/schubergphilis/terraform-aws-mcaf-aurora/compare/v3.2.1...v3.3.0
+
 ## v3.2.1 - 2023-09-18
 
 ### What's Changed
