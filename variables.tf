@@ -268,6 +268,12 @@ variable "name" {
   description = "The name for the Aurora Cluster"
 }
 
+variable "parameter_group_name" {
+  type        = string
+  default     = null
+  description = "The name for the DB / RDS cluster parameter groups"
+}
+
 variable "performance_insights" {
   type        = bool
   default     = false
