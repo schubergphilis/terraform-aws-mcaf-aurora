@@ -21,14 +21,21 @@ module "vpc" {
   public_subnets   = [for k, v in local.azs : cidrsubnet(local.vpc_cidr, 8, k)]
 }
 
+module "kms" {
+  source = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
+  name   = "example"
+}
+
 module "aurora" {
   source = "../.."
 
-  name                = "example"
-  allowed_cidr_blocks = [local.vpc_cidr]
-  instance_class      = "db.r6g.large"
-  instance_count      = 3
-  subnet_ids          = module.vpc.private_subnets
+  name                          = "example"
+  allowed_cidr_blocks           = [local.vpc_cidr]
+  instance_class                = "db.r6g.large"
+  instance_count                = 3
+  kms_key_id                    = module.kms.arn
+  master_user_secret_kms_key_id = module.kms.arn
+  subnet_ids                    = module.vpc.private_subnets
 
   endpoints = {
     reader = {

@@ -122,7 +122,7 @@ variable "deletion_protection" {
 
 variable "enabled_cloudwatch_logs_exports" {
   type        = list(string)
-  default     = null
+  default     = ["audit"]
   description = "List of log types to export to cloudwatch"
 }
 
@@ -276,7 +276,7 @@ variable "parameter_group_name" {
 
 variable "performance_insights" {
   type        = bool
-  default     = false
+  default     = true
   description = "Specifies whether Performance Insights is enabled or not"
 }
 
