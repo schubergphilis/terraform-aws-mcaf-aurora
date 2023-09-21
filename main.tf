@@ -22,7 +22,7 @@ resource "aws_rds_cluster" "default" {
   cluster_identifier                  = var.name
   copy_tags_to_snapshot               = true
   database_name                       = var.database
-  db_cluster_parameter_group_name     = aws_rds_cluster_parameter_group.default.name
+  db_cluster_parameter_group_name     = try(aws_rds_cluster_parameter_group.default[0].name, null)
   db_subnet_group_name                = aws_db_subnet_group.default.name
   db_cluster_instance_class           = var.db_cluster_instance_class
   deletion_protection                 = var.deletion_protection
@@ -183,6 +183,8 @@ module "rds_enhanced_monitoring_role" {
 ################################################################################
 
 resource "aws_rds_cluster_parameter_group" "default" {
+  count = var.cluster_parameters != null ? 1 : 0
+
   name        = var.name
   description = "RDS default cluster parameter group"
   family      = var.cluster_family
