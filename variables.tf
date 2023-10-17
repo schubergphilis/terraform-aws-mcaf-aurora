@@ -11,9 +11,9 @@ variable "allowed_cidr_blocks" {
 }
 
 variable "allowed_security_group_ids" {
-  type        = list(string)
-  default     = []
-  description = "List of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluster"
+  type        = map(string)
+  default     = {}
+  description = "Map of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluster"
 }
 
 variable "allow_major_version_upgrade" {

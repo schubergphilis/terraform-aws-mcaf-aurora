@@ -256,7 +256,7 @@ resource "aws_security_group_rule" "ingress_cidrs" {
 }
 
 resource "aws_security_group_rule" "ingress_groups" {
-  for_each = toset(var.allowed_security_group_ids)
+  for_each = var.allowed_security_group_ids
 
   description              = "Aurora ingress"
   from_port                = aws_rds_cluster.default.port
