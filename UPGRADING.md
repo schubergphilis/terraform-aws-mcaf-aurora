@@ -2,6 +2,14 @@
 
 This document captures breaking changes.
 
+## Upgrading to v4.0.0
+
+### Variables
+
+The following variable type has been modified:
+
+- `allowed_security_group_ids` -> `map(string)` (previous: `list(string)`)
+
 ## Upgrading to v3.0.0
 
 ### Variables
