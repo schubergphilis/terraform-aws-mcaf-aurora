@@ -2,6 +2,18 @@
 
 This document captures breaking changes.
 
+## Upgrading to v4.0.0
+
+### Variables
+
+The following variables have been merged:
+
+- `allowed_cidr_blocks` & `allowed_security_group_ids` -> `security_group_ingress_rules`
+
+This allows for more flexibility in defining ingress rules and prevents issues during the plan phase if a reference cannot be resolved yet. By relying on the description in the `for_each`` this issue has been resolved.
+
+Note: Upgrading to v4.0.0 or higher will cause a recreation of the ingress rules, since the resource `aws_security_group_rule` got replaced by the newer `aws_vpc_security_group_ingress_rule`. In case downtime is not desired add manually (or via code outside this module using the output `security_group_id`) a temporary rule in the security group and remove this rule after the upgrade to v4.0.0.
+
 ## Upgrading to v3.0.0
 
 ### Variables

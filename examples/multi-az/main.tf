@@ -33,7 +33,6 @@ module "aurora" {
 
   name                          = "example"
   allocated_storage             = 100
-  allowed_cidr_blocks           = [local.vpc_cidr]
   db_cluster_instance_class     = "db.r6gd.xlarge"
   instance_count                = 3
   iops                          = 1000
@@ -41,4 +40,11 @@ module "aurora" {
   master_user_secret_kms_key_id = module.kms.arn
   storage_type                  = "io1"
   subnet_ids                    = module.vpc.private_subnets
+
+  security_group_ingress_rules = [
+    {
+      cidr_ipv4   = local.vpc_cidr
+      description = "Allow access from the VPC CIDR range"
+    }
+  ]
 }
