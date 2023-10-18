@@ -243,26 +243,17 @@ resource "aws_security_group" "default" {
   tags        = var.tags
 }
 
-resource "aws_security_group_rule" "ingress_cidrs" {
-  count = var.allowed_cidr_blocks != null ? 1 : 0
+resource "aws_vpc_security_group_ingress_rule" "default" {
+  for_each = length(var.security_group_ingress_rules) != 0 ? { for v in var.security_group_ingress_rules : v.description => v } : {}
 
-  cidr_blocks       = var.allowed_cidr_blocks
-  description       = "Aurora ingress"
-  from_port         = aws_rds_cluster.default.port
-  protocol          = "tcp"
-  security_group_id = aws_security_group.default.id
-  to_port           = aws_rds_cluster.default.port
-  type              = "ingress"
-}
-
-resource "aws_security_group_rule" "ingress_groups" {
-  for_each = length(var.allowed_security_group_ids) != 0 ? { for v in var.allowed_security_group_ids : v.description => v } : {}
-
-  description              = "Aurora ingress"
-  from_port                = aws_rds_cluster.default.port
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.default.id
-  source_security_group_id = each.value.id
-  to_port                  = aws_rds_cluster.default.port
-  type                     = "ingress"
+  cidr_ipv4                    = each.value.cidr_ipv4
+  cidr_ipv6                    = each.value.cidr_ipv6
+  description                  = each.value.description
+  from_port                    = aws_rds_cluster.default.port
+  ip_protocol                  = "tcp"
+  prefix_list_id               = each.value.prefix_list_id
+  referenced_security_group_id = each.value.referenced_security_group_id
+  security_group_id            = aws_security_group.default.id
+  to_port                      = aws_rds_cluster.default.port
+  tags                         = var.tags
 }

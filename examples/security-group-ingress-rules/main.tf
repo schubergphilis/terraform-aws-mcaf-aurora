@@ -31,27 +31,18 @@ module "aurora" {
 
   name                          = "example"
   instance_class                = "db.r6g.large"
-  instance_count                = 3
   kms_key_id                    = module.kms.arn
   master_user_secret_kms_key_id = module.kms.arn
   subnet_ids                    = module.vpc.private_subnets
 
-  endpoints = {
-    reader = {
-      type           = "READER"
-      static_members = [3]
-    }
-  }
-
-  instance_config = {
-    2 = { promotion_tier = 10 }
-    3 = { promotion_tier = 15, instance_class = "db.t3.medium" }
-  }
-
   security_group_ingress_rules = [
     {
-      cidr_ipv4   = local.vpc_cidr
-      description = "Allow access from the VPC CIDR range"
+      cidr_ipv4   = "1.1.1.1/32"
+      description = "Allow access from an IP range"
+    },
+    {
+      referenced_security_group_id = "sg-02ce123456e7893c7"
+      description                  = "Allow access from another security group"
     }
   ]
 }

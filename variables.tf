@@ -4,21 +4,6 @@ variable "allocated_storage" {
   description = "The amount of storage in gibibytes (GiB) to allocate to each DB instance in the Multi-AZ DB cluster. (Required for Multi-AZ DB cluster)"
 }
 
-variable "allowed_cidr_blocks" {
-  type        = list(string)
-  default     = null
-  description = "List of CIDR blocks to add to the cluster security group that should be allowed access to the Aurora cluster"
-}
-
-variable "allowed_security_group_ids" {
-  type = list(object({
-    description = string
-    id          = string
-  }))
-  default     = []
-  description = "Map of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluster"
-}
-
 variable "allow_major_version_upgrade" {
   type        = bool
   default     = false
@@ -311,6 +296,23 @@ variable "publicly_accessible" {
   type        = string
   default     = false
   description = "Control if instances in cluster are publicly accessible"
+}
+
+variable "security_group_ingress_rules" {
+  type = list(object({
+    cidr_ipv4                    = optional(string)
+    cidr_ipv6                    = optional(string)
+    description                  = string
+    prefix_list_id               = optional(string)
+    referenced_security_group_id = optional(string)
+  }))
+  default     = []
+  description = "Security Group ingress rules"
+
+  validation {
+    condition     = alltrue([for o in var.security_group_ingress_rules : (o.cidr_ipv4 != null || o.cidr_ipv6 != null || o.prefix_list_id != null || o.referenced_security_group_id != null)])
+    error_message = "Although \"cidr_ipv4\", \"cidr_ipv6\", \"prefix_list_id\", and \"referenced_security_group_id\" are all marked as optional, you must provide one of them in order to configure the destination of the traffic."
+  }
 }
 
 variable "snapshot_identifier" {
