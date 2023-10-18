@@ -11,8 +11,11 @@ variable "allowed_cidr_blocks" {
 }
 
 variable "allowed_security_group_ids" {
-  type        = map(string)
-  default     = {}
+  type = list(object({
+    description = string
+    id          = string
+  }))
+  default     = []
   description = "Map of security group IDs to add to the cluster security group that should be allowed access to the Aurora cluster"
 }
 

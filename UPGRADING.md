@@ -8,7 +8,7 @@ This document captures breaking changes.
 
 The following variable type has been modified:
 
-- `allowed_security_group_ids` -> `map(string)` (previous: `list(string)`)
+- `allowed_security_group_ids` -> `list(object{})` (previous: `list(string)`)
 
 ## Upgrading to v3.0.0
 
