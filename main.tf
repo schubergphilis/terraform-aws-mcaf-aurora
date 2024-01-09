@@ -1,7 +1,30 @@
 locals {
-  backtrack_window    = (var.engine == "aurora" || var.engine == "aurora-mysql") && (var.engine_mode != "serverless" || var.engine_mode != "serverlessv2") ? var.backtrack_window : null
   instance_class      = var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class
   skip_final_snapshot = var.final_snapshot_identifier == null
+
+  // Backtrack is only supported for MySQL clusters
+  backtrack_window = {
+    "mysql"      = var.backtrack_window
+    "postgresql" = null
+  }[var.engine]
+
+  // Default cluster family to use unless otherwise specified
+  cluster_family = var.cluster_family != null ? var.cluster_family : {
+    "mysql"      = "aurora-mysql8.0"
+    "postgresql" = "aurora-postgresql15"
+  }[var.engine]
+
+  // Default set of logs to export to CloudWatch unless otherwise specified
+  enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports != null ? var.enabled_cloudwatch_logs_exports : {
+    "mysql"      = ["audit", "error", "general", "slowquery"]
+    "postgresql" = ["postgresql"]
+  }[var.engine]
+
+  // Default master username to use unless otherwise specified
+  master_username = var.master_username != null ? var.master_username : {
+    "mysql"      = "root"
+    "postgresql" = "postgres"
+  }[var.engine]
 }
 
 data "aws_subnet" "selected" {
@@ -27,8 +50,8 @@ resource "aws_rds_cluster" "default" {
   db_cluster_instance_class           = var.db_cluster_instance_class
   deletion_protection                 = var.deletion_protection
   enable_http_endpoint                = var.enable_http_endpoint
-  enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
-  engine                              = var.engine
+  enabled_cloudwatch_logs_exports     = var.enable_cloudwatch_logs_exports ? local.enabled_cloudwatch_logs_exports : null
+  engine                              = "aurora-${var.engine}"
   engine_mode                         = var.engine_mode == "serverlessv2" ? "provisioned" : var.engine_mode
   engine_version                      = var.engine_version
   final_snapshot_identifier           = var.final_snapshot_identifier
@@ -39,15 +62,15 @@ resource "aws_rds_cluster" "default" {
   manage_master_user_password         = var.manage_master_user ? var.manage_master_user : null
   master_password                     = var.master_password
   master_user_secret_kms_key_id       = var.master_user_secret_kms_key_id
-  master_username                     = var.master_username
+  master_username                     = local.master_username
   preferred_backup_window             = var.preferred_backup_window
   preferred_maintenance_window        = var.preferred_maintenance_window
   skip_final_snapshot                 = local.skip_final_snapshot
   snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
-  tags                                = var.tags
   vpc_security_group_ids              = [aws_security_group.default.id]
   storage_type                        = var.storage_type
+  tags                                = var.tags
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
@@ -109,7 +132,7 @@ resource "aws_rds_cluster_instance" "first" {
   copy_tags_to_snapshot                 = true
   db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
   db_subnet_group_name                  = aws_db_subnet_group.default.name
-  engine                                = var.engine
+  engine                                = "aurora-${var.engine}"
   engine_version                        = var.engine_version
   identifier                            = "${var.name}-${count.index + 1}"
   instance_class                        = try(var.instance_config[count.index + 1]["instance_class"], null) != null ? var.instance_config[count.index + 1]["instance_class"] : local.instance_class
@@ -133,7 +156,7 @@ resource "aws_rds_cluster_instance" "rest" {
   copy_tags_to_snapshot                 = true
   db_parameter_group_name               = try(aws_db_parameter_group.default[0].name, null)
   db_subnet_group_name                  = aws_db_subnet_group.default.name
-  engine                                = var.engine
+  engine                                = "aurora-${var.engine}"
   engine_version                        = var.engine_version
   identifier                            = "${var.name}-${count.index + 2}"
   instance_class                        = try(var.instance_config[count.index + 2]["instance_class"], null) != null ? var.instance_config[count.index + 2]["instance_class"] : local.instance_class
@@ -187,7 +210,7 @@ resource "aws_rds_cluster_parameter_group" "default" {
 
   name        = coalesce(var.parameter_group_name, var.name)
   description = "RDS default cluster parameter group"
-  family      = var.cluster_family
+  family      = local.cluster_family
   tags        = var.tags
 
   dynamic "parameter" {
@@ -214,7 +237,7 @@ resource "aws_db_parameter_group" "default" {
 
   name        = coalesce(var.parameter_group_name, "${var.name}-aurora")
   description = "RDS default database parameter group"
-  family      = var.cluster_family
+  family      = local.cluster_family
   tags        = var.tags
 
   dynamic "parameter" {

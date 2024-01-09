@@ -34,6 +34,7 @@ module "aurora" {
   name                          = "example"
   allocated_storage             = 100
   db_cluster_instance_class     = "db.r6gd.xlarge"
+  engine                        = "mysql"
   instance_count                = 3
   iops                          = 1000
   kms_key_id                    = module.kms.arn
