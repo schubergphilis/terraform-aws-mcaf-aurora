@@ -35,6 +35,7 @@ module "aurora" {
   source = "../.."
 
   name                          = "example"
+  engine                        = "mysql"
   instance_class                = "db.r6g.large"
   kms_key_id                    = module.kms.arn
   manage_master_user            = false

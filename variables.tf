@@ -30,14 +30,19 @@ variable "auto_pause" {
 
 variable "backtrack_window" {
   type        = number
-  default     = null
-  description = "The target backtrack window, in seconds. Only available for `aurora` and `aurora-mysql` engines. To disable backtracking, set this value to 0. Must be between 0 and 259200 (72 hours)"
+  default     = 0
+  description = "The target backtrack window, in seconds. Only available for `mysql` engines. Must be between 0 (disabled) and 259200 (72 hours)"
+
+  validation {
+    condition     = var.backtrack_window >= 0 && var.backtrack_window <= 259200
+    error_message = "Value must be between \"0\" and \"259200\" (72 hours)"
+  }
 }
 
 variable "backup_retention_period" {
   type        = number
   default     = 7
-  description = "The days to retain backups for"
+  description = "Number of days to retain backups for"
 }
 
 variable "ca_cert_identifier" {
@@ -54,7 +59,7 @@ variable "ca_cert_identifier" {
 
 variable "cluster_family" {
   type        = string
-  default     = "aurora-mysql8.0"
+  default     = null
   description = "The family of the DB cluster parameter group"
 }
 
@@ -108,10 +113,16 @@ variable "deletion_protection" {
   description = "A boolean indicating if the DB instance should have deletion protection enable"
 }
 
+variable "enable_cloudwatch_logs_exports" {
+  type        = bool
+  default     = true
+  description = "Set to false to disable logging to cloudwatch"
+}
+
 variable "enabled_cloudwatch_logs_exports" {
   type        = list(string)
-  default     = ["audit"]
-  description = "List of log types to export to cloudwatch"
+  default     = null
+  description = "List of log types to export to cloudwatch, by default all supported types are exported"
 }
 
 variable "enable_http_endpoint" {
@@ -132,12 +143,11 @@ variable "endpoints" {
 
 variable "engine" {
   type        = string
-  default     = "aurora-mysql"
   description = "The engine type of the Aurora cluster"
 
   validation {
-    condition     = contains(["aurora", "aurora-mysql", "aurora-postgresql"], var.engine)
-    error_message = "Allowed values for engine are \"aurora\", \"aurora-mysql\", \"aurora-postgresql\""
+    condition     = contains(["mysql", "postgresql"], var.engine)
+    error_message = "Allowed values for engine are \"mysql\", \"postgresql\""
   }
 }
 
@@ -154,7 +164,7 @@ variable "engine_mode" {
 
 variable "engine_version" {
   type        = string
-  default     = "8.0.mysql_aurora.3.02.2"
+  default     = null
   description = "The engine version of the Aurora cluster"
 }
 
@@ -229,7 +239,7 @@ variable "master_user_secret_kms_key_id" {
 
 variable "master_username" {
   type        = string
-  default     = "root"
+  default     = null
   description = "Username for the master DB user"
 }
 
@@ -271,7 +281,12 @@ variable "performance_insights" {
 variable "performance_insights_retention_period" {
   type        = number
   default     = 7
-  description = "Amount of time in days to retain Performance Insights data. Valida values are 7, 731 (2 years) or a multiple of 31. When specifying performance_insights_retention_period, performance_insights needs to be set to true"
+  description = "Amount of time in days to retain Performance Insights data, must be `7`, `731` (2 years) or a multiple of `31`"
+
+  validation {
+    condition     = var.performance_insights_retention_period == 7 || var.performance_insights_retention_period == 731 || var.performance_insights_retention_period % 31 == 0
+    error_message = "Value must be \"7\", \"731\" (2 years) or a multiple of \"31\""
+  }
 }
 
 variable "permissions_boundary" {
@@ -311,7 +326,7 @@ variable "security_group_ingress_rules" {
 
   validation {
     condition     = alltrue([for o in var.security_group_ingress_rules : (o.cidr_ipv4 != null || o.cidr_ipv6 != null || o.prefix_list_id != null || o.referenced_security_group_id != null)])
-    error_message = "Although \"cidr_ipv4\", \"cidr_ipv6\", \"prefix_list_id\", and \"referenced_security_group_id\" are all marked as optional, you must provide one of them in order to configure the destination of the traffic."
+    error_message = "One of \"cidr_ipv4\", \"cidr_ipv6\", \"prefix_list_id\", or \"referenced_security_group_id\" must be provided in order to allow ingress connectivity"
   }
 }
 
@@ -353,4 +368,9 @@ variable "timeout_action" {
   type        = string
   default     = "RollbackCapacityChange"
   description = "The action to take when the timeout is reached"
+
+  validation {
+    condition     = contains(["ForceApplyCapacityChange", "RollbackCapacityChange"], var.timeout_action)
+    error_message = "Allowed values for timeout_action are \"ForceApplyCapacityChange\", \"RollbackCapacityChange\"."
+  }
 }
