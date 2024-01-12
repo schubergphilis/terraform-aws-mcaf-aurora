@@ -360,7 +360,7 @@ variable "subnet_ids" {
 
 variable "tags" {
   type        = map(string)
-  default     = {}
+  default     = null
   description = "A mapping of tags to assign to the bucket"
 }
 
