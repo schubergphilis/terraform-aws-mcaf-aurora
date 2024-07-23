@@ -313,6 +313,17 @@ variable "publicly_accessible" {
   description = "Control if instances in cluster are publicly accessible"
 }
 
+variable "restore_to_point_in_time" {
+  type = object({
+    restore_to_time            = optional(string)
+    restore_type               = optional(string, "full-copy")
+    source_cluster_identifier  = string
+    use_latest_restorable_time = optional(string)
+  })
+  default     = null
+  description = "Point in time restore configuration"
+}
+
 variable "security_group_ingress_rules" {
   type = list(object({
     cidr_ipv4                    = optional(string)
