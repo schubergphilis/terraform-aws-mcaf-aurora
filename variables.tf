@@ -244,13 +244,13 @@ variable "master_username" {
 }
 
 variable "max_capacity" {
-  type        = string
+  type        = number
   default     = 8
   description = "The maximum capacity of the serverless cluster"
 }
 
 variable "min_capacity" {
-  type        = string
+  type        = number
   default     = 1
   description = "The minimum capacity of the serverless cluster"
 }
