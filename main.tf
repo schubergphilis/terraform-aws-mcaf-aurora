@@ -90,7 +90,7 @@ resource "aws_rds_cluster" "default" {
     content {
       max_capacity             = var.max_capacity
       min_capacity             = var.min_capacity
-      seconds_until_auto_pause = var.seconds_until_auto_pause
+      seconds_until_auto_pause = var.min_capacity == 0 ? var.seconds_until_auto_pause : null
     }
   }
 }
