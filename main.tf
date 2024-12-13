@@ -79,7 +79,7 @@ resource "aws_rds_cluster" "default" {
       auto_pause               = var.auto_pause
       max_capacity             = var.max_capacity
       min_capacity             = var.min_capacity
-      seconds_until_auto_pause = 1800
+      seconds_until_auto_pause = var.seconds_until_auto_pause
       timeout_action           = var.timeout_action
     }
   }
@@ -88,8 +88,9 @@ resource "aws_rds_cluster" "default" {
     for_each = var.engine_mode == "serverlessv2" ? { create : null } : {}
 
     content {
-      max_capacity = var.max_capacity
-      min_capacity = var.min_capacity
+      max_capacity             = var.max_capacity
+      min_capacity             = var.min_capacity
+      seconds_until_auto_pause = var.seconds_until_auto_pause
     }
   }
 }

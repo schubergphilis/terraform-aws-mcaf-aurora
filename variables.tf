@@ -330,6 +330,17 @@ variable "security_group_ingress_rules" {
   }
 }
 
+variable "seconds_until_auto_pause" {
+  type        = number
+  default     = 1800
+  description = "The time, in seconds, before an Aurora Serverless DB cluster is paused"
+
+  validation {
+    condition     = provider::assert::between(300, 86400, var.seconds_until_auto_pause)
+    error_message = "seconds_until_auto_pause must be between 300 (5 minutes) and 86400 (1 day)"
+  }
+}
+
 variable "snapshot_identifier" {
   type        = string
   default     = null
