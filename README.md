@@ -86,8 +86,8 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_master_password"></a> [master\_password](#input\_master\_password) | Password for the master DB user, must set `manage_master_user` to false if specifying a custom password | `string` | `null` | no |
 | <a name="input_master_user_secret_kms_key_id"></a> [master\_user\_secret\_kms\_key\_id](#input\_master\_user\_secret\_kms\_key\_id) | ID of KMS key to encrypt the master user Secrets Manager secret | `string` | `null` | no |
 | <a name="input_master_username"></a> [master\_username](#input\_master\_username) | Username for the master DB user | `string` | `null` | no |
-| <a name="input_max_capacity"></a> [max\_capacity](#input\_max\_capacity) | The maximum capacity of the serverless cluster | `string` | `8` | no |
-| <a name="input_min_capacity"></a> [min\_capacity](#input\_min\_capacity) | The minimum capacity of the serverless cluster | `string` | `1` | no |
+| <a name="input_max_capacity"></a> [max\_capacity](#input\_max\_capacity) | The maximum capacity of the serverless cluster | `number` | `8` | no |
+| <a name="input_min_capacity"></a> [min\_capacity](#input\_min\_capacity) | The minimum capacity of the serverless cluster | `number` | `1` | no |
 | <a name="input_monitoring_interval"></a> [monitoring\_interval](#input\_monitoring\_interval) | The interval (seconds) for collecting enhanced monitoring metrics | `string` | `null` | no |
 | <a name="input_parameter_group_name"></a> [parameter\_group\_name](#input\_parameter\_group\_name) | The name for the DB / RDS cluster parameter groups | `string` | `null` | no |
 | <a name="input_performance_insights"></a> [performance\_insights](#input\_performance\_insights) | Specifies whether Performance Insights is enabled or not | `bool` | `true` | no |
