@@ -89,6 +89,11 @@ variable "database" {
   type        = string
   default     = null
   description = "The name of the first database to be created when the cluster is created"
+
+  validation {
+    condition     = (var.global_database_secondary != null && var.database == null) || var.global_database_secondary == null
+    error_message = "Cannot specify database name for global secondary cluster"
+  }
 }
 
 variable "database_parameters" {
@@ -174,6 +179,26 @@ variable "final_snapshot_identifier" {
   description = "Identifier of the final snapshot to create before deleting the cluster"
 }
 
+variable "global_database_primary" {
+  type        = bool
+  default     = false
+  description = "Whether the cluster is part of a global database as the primary cluster"
+}
+
+variable "global_database_secondary" {
+  type = object({
+    global_cluster_identifier      = string
+    enable_global_write_forwarding = optional(bool, true)
+  })
+  default     = null
+  description = "Whether the cluster is part of a global database as the seconday cluster"
+
+  validation {
+    condition     = !(var.global_database_primary && var.global_database_secondary != null)
+    error_message = "Cannot configure a cluster as both primary and secondary in a global database"
+  }
+}
+
 variable "iam_database_authentication_enabled" {
   type        = bool
   default     = true
@@ -216,19 +241,29 @@ variable "iops" {
 variable "kms_key_id" {
   type        = string
   default     = null
-  description = "ID of KMS key to encrypt storage and performance insights data"
+  description = "ARN of KMS key to encrypt storage and performance insights data"
 }
 
 variable "manage_master_user" {
   type        = bool
   default     = true
   description = "Set to false to provide a custom password using `master_password`"
+
+  validation {
+    condition     = var.global_database_primary == false || (var.global_database_primary && var.manage_master_user == false)
+    error_message = "Cannot enable manage_master_user for a global database"
+  }
 }
 
 variable "master_password" {
   type        = string
   default     = null
   description = "Password for the master DB user, must set `manage_master_user` to false if specifying a custom password"
+
+  validation {
+    condition     = (var.global_database_secondary != null && var.master_password == null) || var.global_database_secondary == null
+    error_message = "Cannot specify master_password for global secondary cluster"
+  }
 }
 
 variable "master_user_secret_kms_key_id" {
@@ -241,6 +276,11 @@ variable "master_username" {
   type        = string
   default     = null
   description = "Username for the master DB user"
+
+  validation {
+    condition     = (var.global_database_secondary != null && var.master_username == null) || var.global_database_secondary == null
+    error_message = "Cannot specify master_username for global secondary cluster"
+  }
 }
 
 variable "max_capacity" {

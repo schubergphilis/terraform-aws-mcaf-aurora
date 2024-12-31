@@ -23,6 +23,11 @@ output "database" {
   description = "Name of the first database created when the cluster was created"
 }
 
+output "global_cluster_identifier" {
+  value       = var.global_database_primary ? aws_rds_global_cluster.default[0].id : null
+  description = "If the cluster is the primary of a global cluster, the global cluster ID"
+}
+
 output "endpoint" {
   value       = aws_rds_cluster.default.endpoint
   description = "DNS address of the RDS instance"

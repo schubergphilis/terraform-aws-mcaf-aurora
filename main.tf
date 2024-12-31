@@ -2,6 +2,11 @@ locals {
   instance_class      = var.engine_mode == "serverlessv2" ? "db.serverless" : var.instance_class
   skip_final_snapshot = var.final_snapshot_identifier == null
 
+  global_cluster_identifier = var.global_database_primary ? aws_rds_global_cluster.default[0].id : var.global_database_secondary != null ? var.global_database_secondary.global_cluster_identifier : null
+
+  // For a secondary cluster, the KMS key must be specified explicitly even if defaulted to the AWS Managed alias ("For encrypted cross-region replica, kmsKeyId should be explicitly specified").
+  kms_key_arn = var.global_database_secondary != null && var.storage_encrypted && var.kms_key_id == null ? data.aws_kms_alias.rds.target_key_arn : var.kms_key_id
+
   // Backtrack is only supported for MySQL clusters
   backtrack_window = {
     "mysql"      = var.backtrack_window
@@ -21,7 +26,7 @@ locals {
   }[var.engine]
 
   // Default master username to use unless otherwise specified
-  master_username = var.master_username != null ? var.master_username : {
+  master_username = var.master_username != null || var.global_database_secondary != null ? var.master_username : {
     "mysql"      = "root"
     "postgresql" = "postgres"
   }[var.engine]
@@ -29,6 +34,25 @@ locals {
 
 data "aws_subnet" "selected" {
   id = var.subnet_ids[0]
+}
+
+################################################################################
+# Global Database
+################################################################################
+
+data "aws_kms_alias" "rds" {
+  name = "alias/aws/rds"
+}
+
+resource "aws_rds_global_cluster" "default" {
+  count = var.global_database_primary ? 1 : 0
+
+  global_cluster_identifier = "${var.name}-global"
+  engine                    = "aurora-${var.engine}"
+  engine_version            = var.engine_version
+  database_name             = var.database
+  storage_encrypted         = var.storage_encrypted
+  tags                      = var.tags
 }
 
 ################################################################################
@@ -51,14 +75,16 @@ resource "aws_rds_cluster" "default" {
   deletion_protection                 = var.deletion_protection
   enable_http_endpoint                = var.enable_http_endpoint
   enabled_cloudwatch_logs_exports     = var.enable_cloudwatch_logs_exports ? local.enabled_cloudwatch_logs_exports : null
+  enable_global_write_forwarding      = var.global_database_secondary != null ? var.global_database_secondary.enable_global_write_forwarding : null
   engine                              = "aurora-${var.engine}"
   engine_mode                         = var.engine_mode == "serverlessv2" ? "provisioned" : var.engine_mode
   engine_version                      = var.engine_version
   final_snapshot_identifier           = var.final_snapshot_identifier
+  global_cluster_identifier           = local.global_cluster_identifier
   iam_database_authentication_enabled = var.iam_database_authentication_enabled
   iam_roles                           = var.iam_roles
   iops                                = var.iops
-  kms_key_id                          = var.kms_key_id
+  kms_key_id                          = local.kms_key_arn
   manage_master_user_password         = var.manage_master_user ? var.manage_master_user : null
   master_password                     = var.master_password
   master_user_secret_kms_key_id       = var.master_user_secret_kms_key_id
@@ -92,6 +118,10 @@ resource "aws_rds_cluster" "default" {
       min_capacity             = var.min_capacity
       seconds_until_auto_pause = var.min_capacity == 0 ? var.seconds_until_auto_pause : null
     }
+  }
+
+  lifecycle {
+    ignore_changes = [replication_source_identifier]
   }
 }
 
@@ -140,7 +170,7 @@ resource "aws_rds_cluster_instance" "first" {
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
-  performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
+  performance_insights_kms_key_id       = var.performance_insights ? local.kms_key_arn : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
   promotion_tier                        = try(var.instance_config[count.index + 1]["promotion_tier"], null)
   publicly_accessible                   = var.publicly_accessible
@@ -164,7 +194,7 @@ resource "aws_rds_cluster_instance" "rest" {
   monitoring_interval                   = var.monitoring_interval
   monitoring_role_arn                   = try(module.rds_enhanced_monitoring_role[0].arn, null)
   performance_insights_enabled          = var.performance_insights
-  performance_insights_kms_key_id       = var.performance_insights ? var.kms_key_id : null
+  performance_insights_kms_key_id       = var.performance_insights ? local.kms_key_arn : null
   performance_insights_retention_period = var.performance_insights ? var.performance_insights_retention_period : null
   promotion_tier                        = try(var.instance_config[count.index + 2]["promotion_tier"], null)
   publicly_accessible                   = var.publicly_accessible
