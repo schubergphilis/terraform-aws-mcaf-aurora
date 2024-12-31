@@ -222,13 +222,15 @@ resource "aws_db_subnet_group" "default" {
 module "rds_enhanced_monitoring_role" {
   count = var.monitoring_interval != null ? 1 : 0
 
+  source  = "schubergphilis/mcaf-role/aws"
+  version = "~> 0.4.0"
+
   name                  = "RDSEnhancedMonitoringRole-${var.name}"
   permissions_boundary  = var.permissions_boundary
   policy_arns           = ["arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"]
   postfix               = false
   principal_identifiers = ["monitoring.rds.amazonaws.com"]
   principal_type        = "Service"
-  source                = "github.com/schubergphilis/terraform-aws-mcaf-role?ref=v0.3.3"
   tags                  = var.tags
 }
 
