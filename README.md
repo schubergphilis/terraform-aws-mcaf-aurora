@@ -17,7 +17,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.81.0 |
 
 ## Providers
@@ -30,7 +30,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds_enhanced_monitoring_role"></a> [rds\_enhanced\_monitoring\_role](#module\_rds\_enhanced\_monitoring\_role) | github.com/schubergphilis/terraform-aws-mcaf-role | v0.3.3 |
+| <a name="module_rds_enhanced_monitoring_role"></a> [rds\_enhanced\_monitoring\_role](#module\_rds\_enhanced\_monitoring\_role) | schubergphilis/mcaf-role/aws | ~> 0.4.0 |
 
 ## Resources
 
@@ -43,8 +43,10 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | [aws_rds_cluster_instance.first](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance) | resource |
 | [aws_rds_cluster_instance.rest](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_instance) | resource |
 | [aws_rds_cluster_parameter_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_cluster_parameter_group) | resource |
+| [aws_rds_global_cluster.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_global_cluster) | resource |
 | [aws_security_group.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_vpc_security_group_ingress_rule.default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc_security_group_ingress_rule) | resource |
+| [aws_kms_alias.rds](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_alias) | data source |
 | [aws_subnet.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet) | data source |
 
 ## Inputs
@@ -75,13 +77,15 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the Aurora cluster | `string` | `"provisioned"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | The engine version of the Aurora cluster | `string` | `null` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | Identifier of the final snapshot to create before deleting the cluster | `string` | `null` | no |
+| <a name="input_global_database_primary"></a> [global\_database\_primary](#input\_global\_database\_primary) | Whether the cluster is part of a global database as the primary cluster | `bool` | `false` | no |
+| <a name="input_global_database_secondary"></a> [global\_database\_secondary](#input\_global\_database\_secondary) | Whether the cluster is part of a global database as the seconday cluster | <pre>object({<br>    global_cluster_identifier      = string<br>    enable_global_write_forwarding = optional(bool, true)<br>  })</pre> | `null` | no |
 | <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `true` | no |
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A list of IAM Role ARNs to associate with the cluster | `list(string)` | `null` | no |
 | <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`) | `string` | `null` | no |
 | <a name="input_instance_config"></a> [instance\_config](#input\_instance\_config) | Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number | <pre>map(object({<br>    instance_class = optional(string, null)<br>    promotion_tier = optional(number, null)<br>  }))</pre> | `null` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach (not used when `engine_mode` set to `serverless`) | `number` | `2` | no |
 | <a name="input_iops"></a> [iops](#input\_iops) | The amount of Provisioned IOPS to be initially allocated for each DB instance. (Required for Multi-AZ DB cluster) | `number` | `null` | no |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ID of KMS key to encrypt storage and performance insights data | `string` | `null` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ARN of KMS key to encrypt storage and performance insights data | `string` | `null` | no |
 | <a name="input_manage_master_user"></a> [manage\_master\_user](#input\_manage\_master\_user) | Set to false to provide a custom password using `master_password` | `bool` | `true` | no |
 | <a name="input_master_password"></a> [master\_password](#input\_master\_password) | Password for the master DB user, must set `manage_master_user` to false if specifying a custom password | `string` | `null` | no |
 | <a name="input_master_user_secret_kms_key_id"></a> [master\_user\_secret\_kms\_key\_id](#input\_master\_user\_secret\_kms\_key\_id) | ID of KMS key to encrypt the master user Secrets Manager secret | `string` | `null` | no |
@@ -114,6 +118,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="output_custom_endpoints"></a> [custom\_endpoints](#output\_custom\_endpoints) | The DNS addresses of the custom endpoints. |
 | <a name="output_database"></a> [database](#output\_database) | Name of the first database created when the cluster was created |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | DNS address of the RDS instance |
+| <a name="output_global_cluster_identifier"></a> [global\_cluster\_identifier](#output\_global\_cluster\_identifier) | If the cluster is the primary of a global cluster, the global cluster ID |
 | <a name="output_id"></a> [id](#output\_id) | ID of the Aurora cluster |
 | <a name="output_instance_ids"></a> [instance\_ids](#output\_instance\_ids) | Aurora instances IDs |
 | <a name="output_master_user_secret"></a> [master\_user\_secret](#output\_master\_user\_secret) | The generated database master user secret when `var.manage_master_user` is set to `true` |
