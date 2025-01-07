@@ -119,6 +119,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="output_database"></a> [database](#output\_database) | Name of the first database created when the cluster was created |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | DNS address of the RDS instance |
 | <a name="output_global_cluster_identifier"></a> [global\_cluster\_identifier](#output\_global\_cluster\_identifier) | If the cluster is the primary of a global cluster, the global cluster ID |
+| <a name="output_global_cluster_writer_endpoint"></a> [global\_cluster\_writer\_endpoint](#output\_global\_cluster\_writer\_endpoint) | If the cluster is the primary of a global cluster, the global cluster writer endpoint |
 | <a name="output_id"></a> [id](#output\_id) | ID of the Aurora cluster |
 | <a name="output_instance_ids"></a> [instance\_ids](#output\_instance\_ids) | Aurora instances IDs |
 | <a name="output_master_user_secret"></a> [master\_user\_secret](#output\_master\_user\_secret) | The generated database master user secret when `var.manage_master_user` is set to `true` |
