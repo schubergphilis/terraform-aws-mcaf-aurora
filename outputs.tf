@@ -28,6 +28,11 @@ output "global_cluster_identifier" {
   description = "If the cluster is the primary of a global cluster, the global cluster ID"
 }
 
+output "global_cluster_writer_endpoint" {
+  value       = var.global_database_primary ? aws_rds_global_cluster.default[0].endpoint : null
+  description = "If the cluster is the primary of a global cluster, the global cluster writer endpoint"
+}
+
 output "endpoint" {
   value       = aws_rds_cluster.default.endpoint
   description = "DNS address of the RDS instance"
