@@ -98,6 +98,17 @@ resource "aws_rds_cluster" "default" {
   storage_type                        = var.storage_type
   tags                                = var.tags
 
+  dynamic "restore_to_point_in_time" {
+    for_each = var.restore_to_point_in_time != null ? { create : null } : {}
+
+    content {
+      restore_to_time            = var.restore_to_point_in_time.restore_to_time
+      restore_type               = var.restore_to_point_in_time.restore_type
+      source_cluster_identifier  = var.restore_to_point_in_time.source_cluster_identifier
+      use_latest_restorable_time = var.restore_to_point_in_time.use_latest_restorable_time
+    }
+  }
+
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
 
