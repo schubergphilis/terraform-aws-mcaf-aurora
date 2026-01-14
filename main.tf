@@ -64,8 +64,8 @@ resource "aws_rds_cluster" "default" {
   allocated_storage                   = var.allocated_storage
   allow_major_version_upgrade         = var.allow_major_version_upgrade
   apply_immediately                   = var.apply_immediately
-  backup_retention_period             = var.backup_retention_period
   backtrack_window                    = local.backtrack_window
+  backup_retention_period             = var.backup_retention_period
   cluster_identifier                  = var.name
   copy_tags_to_snapshot               = true
   database_name                       = var.database
@@ -94,9 +94,9 @@ resource "aws_rds_cluster" "default" {
   skip_final_snapshot                 = local.skip_final_snapshot
   snapshot_identifier                 = var.snapshot_identifier
   storage_encrypted                   = var.storage_encrypted #tfsec:ignore:AWS051
-  vpc_security_group_ids              = [aws_security_group.default.id]
   storage_type                        = var.storage_type
   tags                                = var.tags
+  vpc_security_group_ids              = [aws_security_group.default.id]
 
   dynamic "scaling_configuration" {
     for_each = var.engine_mode == "serverless" ? { create : null } : {}
@@ -223,7 +223,7 @@ module "rds_enhanced_monitoring_role" {
   count = var.monitoring_interval != null ? 1 : 0
 
   source  = "schubergphilis/mcaf-role/aws"
-  version = "~> 0.4.0"
+  version = "~> 0.5.0"
 
   name                  = "RDSEnhancedMonitoringRole-${var.name}"
   permissions_boundary  = var.permissions_boundary
@@ -313,3 +313,5 @@ resource "aws_vpc_security_group_ingress_rule" "default" {
   to_port                      = aws_rds_cluster.default.port
   tags                         = var.tags
 }
+
+

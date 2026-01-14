@@ -11,7 +11,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "~> 6.0"
 
   name             = "example"
   azs              = local.azs
@@ -22,8 +22,10 @@ module "vpc" {
 }
 
 module "kms" {
-  source = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
-  name   = "example"
+  source  = "schubergphilis/mcaf-kms/aws"
+  version = "~> 1.0"
+
+  name = "example"
 }
 
 // Multi-AZ DB clusters are not the same as Aurora DB clusters. For information about Aurora DB clusters, see the Amazon Aurora User Guide.

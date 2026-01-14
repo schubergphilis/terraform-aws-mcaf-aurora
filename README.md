@@ -30,7 +30,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds_enhanced_monitoring_role"></a> [rds\_enhanced\_monitoring\_role](#module\_rds\_enhanced\_monitoring\_role) | schubergphilis/mcaf-role/aws | ~> 0.4.0 |
+| <a name="module_rds_enhanced_monitoring_role"></a> [rds\_enhanced\_monitoring\_role](#module\_rds\_enhanced\_monitoring\_role) | schubergphilis/mcaf-role/aws | ~> 0.5.0 |
 
 ## Resources
 
