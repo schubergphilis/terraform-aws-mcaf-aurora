@@ -15,7 +15,7 @@ provider "aws" {
 
 module "vpc_primary" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "~> 6.0"
 
   name             = "example"
   azs              = local.azs_primary
@@ -68,7 +68,7 @@ module "vpc_secondary" {
   }
 
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "~> 6.0"
 
   name             = "example"
   azs              = local.azs_secondary

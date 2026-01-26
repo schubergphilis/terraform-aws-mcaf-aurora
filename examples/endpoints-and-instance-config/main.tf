@@ -11,7 +11,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "~> 6.0"
 
   name             = "example"
   azs              = local.azs
@@ -22,8 +22,10 @@ module "vpc" {
 }
 
 module "kms" {
-  source = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
-  name   = "example"
+  source  = "schubergphilis/mcaf-kms/aws"
+  version = "~> 1.0"
+
+  name = "example"
 }
 
 module "aurora" {
@@ -35,6 +37,7 @@ module "aurora" {
   instance_count                = 3
   kms_key_id                    = module.kms.arn
   master_user_secret_kms_key_id = module.kms.arn
+  performance_insights          = false
   subnet_ids                    = module.vpc.private_subnets
 
   endpoints = {

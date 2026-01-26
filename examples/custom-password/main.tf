@@ -16,7 +16,7 @@ resource "random_password" "root_password" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "~> 6.0"
 
   name             = "example"
   azs              = local.azs
@@ -27,8 +27,10 @@ module "vpc" {
 }
 
 module "kms" {
-  source = "github.com/schubergphilis/terraform-aws-mcaf-kms?ref=v0.3.0"
-  name   = "example"
+  source  = "schubergphilis/mcaf-kms/aws"
+  version = "~> 1.0"
+
+  name = "example"
 }
 
 module "aurora" {

@@ -353,6 +353,17 @@ variable "publicly_accessible" {
   description = "Control if instances in cluster are publicly accessible"
 }
 
+variable "seconds_until_auto_pause" {
+  type        = number
+  default     = 1800
+  description = "The time, in seconds, before an Aurora Serverless DB cluster is paused"
+
+  validation {
+    condition     = var.seconds_until_auto_pause >= 300 && var.seconds_until_auto_pause <= 86400
+    error_message = "seconds_until_auto_pause must be between 300 (5 minutes) and 86400 (1 day)"
+  }
+}
+
 variable "security_group_ingress_rules" {
   type = list(object({
     cidr_ipv4                    = optional(string)
@@ -370,16 +381,6 @@ variable "security_group_ingress_rules" {
   }
 }
 
-variable "seconds_until_auto_pause" {
-  type        = number
-  default     = 1800
-  description = "The time, in seconds, before an Aurora Serverless DB cluster is paused"
-
-  validation {
-    condition     = var.seconds_until_auto_pause >= 300 && var.seconds_until_auto_pause <= 86400
-    error_message = "seconds_until_auto_pause must be between 300 (5 minutes) and 86400 (1 day)"
-  }
-}
 
 variable "snapshot_identifier" {
   type        = string

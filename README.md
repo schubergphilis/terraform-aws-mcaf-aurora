@@ -18,19 +18,21 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.8 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.81.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.81.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.81.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.81.0 >= 5.81.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds_enhanced_monitoring_role"></a> [rds\_enhanced\_monitoring\_role](#module\_rds\_enhanced\_monitoring\_role) | schubergphilis/mcaf-role/aws | ~> 0.4.0 |
+| <a name="module_rds_enhanced_monitoring_role"></a> [rds\_enhanced\_monitoring\_role](#module\_rds\_enhanced\_monitoring\_role) | schubergphilis/mcaf-role/aws | ~> 0.5.0 |
 
 ## Resources
 
@@ -65,24 +67,24 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_backup_retention_period"></a> [backup\_retention\_period](#input\_backup\_retention\_period) | Number of days to retain backups for | `number` | `7` | no |
 | <a name="input_ca_cert_identifier"></a> [ca\_cert\_identifier](#input\_ca\_cert\_identifier) | Identifier of the CA certificate for the DB instance | `string` | `"rds-ca-rsa2048-g1"` | no |
 | <a name="input_cluster_family"></a> [cluster\_family](#input\_cluster\_family) | The family of the DB cluster parameter group | `string` | `null` | no |
-| <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | A list of cluster DB parameters to apply | <pre>list(object({<br>    apply_method = optional(string, "immediate")<br>    name         = string<br>    value        = string<br>  }))</pre> | <pre>[<br>  {<br>    "apply_method": "pending-reboot",<br>    "name": "character_set_server",<br>    "value": "utf8"<br>  },<br>  {<br>    "apply_method": "pending-reboot",<br>    "name": "character_set_client",<br>    "value": "utf8"<br>  },<br>  {<br>    "apply_method": "immediate",<br>    "name": "require_secure_transport",<br>    "value": "ON"<br>  }<br>]</pre> | no |
+| <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | A list of cluster DB parameters to apply | <pre>list(object({<br/>    apply_method = optional(string, "immediate")<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | <pre>[<br/>  {<br/>    "apply_method": "pending-reboot",<br/>    "name": "character_set_server",<br/>    "value": "utf8"<br/>  },<br/>  {<br/>    "apply_method": "pending-reboot",<br/>    "name": "character_set_client",<br/>    "value": "utf8"<br/>  },<br/>  {<br/>    "apply_method": "immediate",<br/>    "name": "require_secure_transport",<br/>    "value": "ON"<br/>  }<br/>]</pre> | no |
 | <a name="input_database"></a> [database](#input\_database) | The name of the first database to be created when the cluster is created | `string` | `null` | no |
-| <a name="input_database_parameters"></a> [database\_parameters](#input\_database\_parameters) | A list of instance DB parameters to apply | <pre>list(object({<br>    apply_method = optional(string, "immediate")<br>    name         = string<br>    value        = string<br>  }))</pre> | `null` | no |
+| <a name="input_database_parameters"></a> [database\_parameters](#input\_database\_parameters) | A list of instance DB parameters to apply | <pre>list(object({<br/>    apply_method = optional(string, "immediate")<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | `null` | no |
 | <a name="input_db_cluster_instance_class"></a> [db\_cluster\_instance\_class](#input\_db\_cluster\_instance\_class) | The compute and memory capacity of each DB instance in the Multi-AZ DB cluster. Only set this variable if you are deploying a Multi-AZ DB cluster. (Required for Multi-AZ DB cluster) | `string` | `null` | no |
 | <a name="input_deletion_protection"></a> [deletion\_protection](#input\_deletion\_protection) | A boolean indicating if the DB instance should have deletion protection enable | `bool` | `true` | no |
 | <a name="input_enable_cloudwatch_logs_exports"></a> [enable\_cloudwatch\_logs\_exports](#input\_enable\_cloudwatch\_logs\_exports) | Set to false to disable logging to cloudwatch | `bool` | `true` | no |
 | <a name="input_enable_http_endpoint"></a> [enable\_http\_endpoint](#input\_enable\_http\_endpoint) | Enable Aurora Serverless HTTP endpoint (Data API) | `bool` | `false` | no |
 | <a name="input_enabled_cloudwatch_logs_exports"></a> [enabled\_cloudwatch\_logs\_exports](#input\_enabled\_cloudwatch\_logs\_exports) | List of log types to export to cloudwatch, by default all supported types are exported | `list(string)` | `null` | no |
-| <a name="input_endpoints"></a> [endpoints](#input\_endpoints) | A map of additional cluster endpoints to be created | <pre>map(object({<br>    excluded_members = optional(list(string), [])<br>    static_members   = optional(list(string), [])<br>    type             = string<br>  }))</pre> | `{}` | no |
+| <a name="input_endpoints"></a> [endpoints](#input\_endpoints) | A map of additional cluster endpoints to be created | <pre>map(object({<br/>    excluded_members = optional(list(string), [])<br/>    static_members   = optional(list(string), [])<br/>    type             = string<br/>  }))</pre> | `{}` | no |
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the Aurora cluster | `string` | `"provisioned"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | The engine version of the Aurora cluster | `string` | `null` | no |
 | <a name="input_final_snapshot_identifier"></a> [final\_snapshot\_identifier](#input\_final\_snapshot\_identifier) | Identifier of the final snapshot to create before deleting the cluster | `string` | `null` | no |
 | <a name="input_global_database_primary"></a> [global\_database\_primary](#input\_global\_database\_primary) | Whether the cluster is part of a global database as the primary cluster | `bool` | `false` | no |
-| <a name="input_global_database_secondary"></a> [global\_database\_secondary](#input\_global\_database\_secondary) | Whether the cluster is part of a global database as the seconday cluster | <pre>object({<br>    global_cluster_identifier      = string<br>    enable_global_write_forwarding = optional(bool, true)<br>  })</pre> | `null` | no |
+| <a name="input_global_database_secondary"></a> [global\_database\_secondary](#input\_global\_database\_secondary) | Whether the cluster is part of a global database as the seconday cluster | <pre>object({<br/>    global_cluster_identifier      = string<br/>    enable_global_write_forwarding = optional(bool, true)<br/>  })</pre> | `null` | no |
 | <a name="input_iam_database_authentication_enabled"></a> [iam\_database\_authentication\_enabled](#input\_iam\_database\_authentication\_enabled) | Specify if mapping AWS IAM accounts to database accounts is enabled. | `bool` | `true` | no |
 | <a name="input_iam_roles"></a> [iam\_roles](#input\_iam\_roles) | A list of IAM Role ARNs to associate with the cluster | `list(string)` | `null` | no |
 | <a name="input_instance_class"></a> [instance\_class](#input\_instance\_class) | The class of RDS instances to attach to the cluster instances (not used when `engine_mode` set to `serverless`) | `string` | `null` | no |
-| <a name="input_instance_config"></a> [instance\_config](#input\_instance\_config) | Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number | <pre>map(object({<br>    instance_class = optional(string, null)<br>    promotion_tier = optional(number, null)<br>  }))</pre> | `null` | no |
+| <a name="input_instance_config"></a> [instance\_config](#input\_instance\_config) | Map of instance specific settings that override values set elsewhere in the module, map keys should match instance number | <pre>map(object({<br/>    instance_class = optional(string, null)<br/>    promotion_tier = optional(number, null)<br/>  }))</pre> | `null` | no |
 | <a name="input_instance_count"></a> [instance\_count](#input\_instance\_count) | The number of RDS instances to attach (not used when `engine_mode` set to `serverless`) | `number` | `2` | no |
 | <a name="input_iops"></a> [iops](#input\_iops) | The amount of Provisioned IOPS to be initially allocated for each DB instance. (Required for Multi-AZ DB cluster) | `number` | `null` | no |
 | <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | ARN of KMS key to encrypt storage and performance insights data | `string` | `null` | no |
@@ -101,7 +103,7 @@ This can be changed by updating `var.instance_count`. By default all instances u
 | <a name="input_preferred_maintenance_window"></a> [preferred\_maintenance\_window](#input\_preferred\_maintenance\_window) | The weekly time range during which system maintenance can occur, in UTC e.g. wed:04:00-wed:04:30 | `string` | `null` | no |
 | <a name="input_publicly_accessible"></a> [publicly\_accessible](#input\_publicly\_accessible) | Control if instances in cluster are publicly accessible | `string` | `false` | no |
 | <a name="input_seconds_until_auto_pause"></a> [seconds\_until\_auto\_pause](#input\_seconds\_until\_auto\_pause) | The time, in seconds, before an Aurora Serverless DB cluster is paused | `number` | `1800` | no |
-| <a name="input_security_group_ingress_rules"></a> [security\_group\_ingress\_rules](#input\_security\_group\_ingress\_rules) | Security Group ingress rules | <pre>list(object({<br>    cidr_ipv4                    = optional(string)<br>    cidr_ipv6                    = optional(string)<br>    description                  = string<br>    prefix_list_id               = optional(string)<br>    referenced_security_group_id = optional(string)<br>  }))</pre> | `[]` | no |
+| <a name="input_security_group_ingress_rules"></a> [security\_group\_ingress\_rules](#input\_security\_group\_ingress\_rules) | Security Group ingress rules | <pre>list(object({<br/>    cidr_ipv4                    = optional(string)<br/>    cidr_ipv6                    = optional(string)<br/>    description                  = string<br/>    prefix_list_id               = optional(string)<br/>    referenced_security_group_id = optional(string)<br/>  }))</pre> | `[]` | no |
 | <a name="input_snapshot_identifier"></a> [snapshot\_identifier](#input\_snapshot\_identifier) | Database snapshot identifier to create the database from | `string` | `null` | no |
 | <a name="input_storage_encrypted"></a> [storage\_encrypted](#input\_storage\_encrypted) | Specifies whether the DB cluster is encrypted | `bool` | `true` | no |
 | <a name="input_storage_type"></a> [storage\_type](#input\_storage\_type) | Specifies the storage type to be associated with the DB cluster. (Required for Multi-AZ DB cluster) | `string` | `null` | no |
