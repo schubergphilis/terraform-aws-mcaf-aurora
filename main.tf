@@ -33,7 +33,8 @@ locals {
 }
 
 data "aws_subnet" "selected" {
-  id = var.subnet_ids[0]
+  region = var.region
+  id     = var.subnet_ids[0]
 }
 
 ################################################################################
@@ -41,12 +42,14 @@ data "aws_subnet" "selected" {
 ################################################################################
 
 data "aws_kms_alias" "rds" {
-  name = "alias/aws/rds"
+  region = var.region
+  name   = "alias/aws/rds"
 }
 
 resource "aws_rds_global_cluster" "default" {
   count = var.global_database_primary ? 1 : 0
 
+  region                    = var.region
   global_cluster_identifier = "${var.name}-global"
   engine                    = "aurora-${var.engine}"
   engine_version            = var.engine_version
@@ -61,6 +64,7 @@ resource "aws_rds_global_cluster" "default" {
 
 resource "aws_rds_cluster" "default" {
   #checkov:skip=CKV2_AWS_8: Ensuring that RDS clusters have an AWS Backup backup plan is not the responsibility of this module
+  region                              = var.region
   allocated_storage                   = var.allocated_storage
   allow_major_version_upgrade         = var.allow_major_version_upgrade
   apply_immediately                   = var.apply_immediately
@@ -132,6 +136,7 @@ resource "aws_rds_cluster" "default" {
 resource "aws_rds_cluster_endpoint" "default" {
   for_each = { for name, settings in var.endpoints : name => settings if var.engine_mode != "serverless" }
 
+  region                      = var.region
   cluster_endpoint_identifier = lower("${aws_rds_cluster.default.id}-${each.key}")
   cluster_identifier          = aws_rds_cluster.default.id
   custom_endpoint_type        = each.value.type
@@ -156,6 +161,7 @@ therefore a main cluster instance resource is created and additional cluster ins
 resource "aws_rds_cluster_instance" "first" {
   count = var.engine_mode == "serverless" ? 0 : 1
 
+  region                                = var.region
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
   ca_cert_identifier                    = var.ca_cert_identifier
@@ -180,6 +186,7 @@ resource "aws_rds_cluster_instance" "first" {
 resource "aws_rds_cluster_instance" "rest" {
   count = var.engine_mode == "serverless" ? 0 : var.instance_count - 1
 
+  region                                = var.region
   apply_immediately                     = var.apply_immediately
   auto_minor_version_upgrade            = var.auto_minor_version_upgrade
   ca_cert_identifier                    = var.ca_cert_identifier
@@ -210,6 +217,7 @@ resource "aws_rds_cluster_instance" "rest" {
 ################################################################################
 
 resource "aws_db_subnet_group" "default" {
+  region     = var.region
   name       = var.name
   subnet_ids = var.subnet_ids
   tags       = var.tags
@@ -241,6 +249,7 @@ module "rds_enhanced_monitoring_role" {
 resource "aws_rds_cluster_parameter_group" "default" {
   count = var.cluster_parameters != null ? 1 : 0
 
+  region      = var.region
   name        = coalesce(var.parameter_group_name, var.name)
   description = "RDS default cluster parameter group"
   family      = local.cluster_family
@@ -268,6 +277,7 @@ resource "aws_rds_cluster_parameter_group" "default" {
 resource "aws_db_parameter_group" "default" {
   count = var.database_parameters != null ? 1 : 0
 
+  region      = var.region
   name        = coalesce(var.parameter_group_name, "${var.name}-aurora")
   description = "RDS default database parameter group"
   family      = local.cluster_family
@@ -293,6 +303,7 @@ resource "aws_db_parameter_group" "default" {
 ################################################################################
 
 resource "aws_security_group" "default" {
+  region      = var.region
   name        = "${var.name}-aurora"
   description = "Access to Aurora"
   vpc_id      = data.aws_subnet.selected.vpc_id
@@ -302,6 +313,7 @@ resource "aws_security_group" "default" {
 resource "aws_vpc_security_group_ingress_rule" "default" {
   for_each = length(var.security_group_ingress_rules) != 0 ? { for v in var.security_group_ingress_rules : v.description => v } : {}
 
+  region                       = var.region
   cidr_ipv4                    = each.value.cidr_ipv4
   cidr_ipv6                    = each.value.cidr_ipv6
   description                  = each.value.description

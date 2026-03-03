@@ -353,6 +353,12 @@ variable "publicly_accessible" {
   description = "Control if instances in cluster are publicly accessible"
 }
 
+variable "region" {
+  type        = string
+  default     = null
+  description = "The AWS region where resources will be created; if omitted the default provider region is used"
+}
+
 variable "seconds_until_auto_pause" {
   type        = number
   default     = 1800
