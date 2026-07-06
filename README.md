@@ -1,3 +1,9 @@
+<!-- migrate-repo:banner -->
+> [!IMPORTANT]
+> **This repository has moved to [`schubergphilis-ep/terraform-aws-mcaf-aurora`](https://github.com/schubergphilis-ep/terraform-aws-mcaf-aurora).**
+> Please update your references and use the new location for issues, PRs, and contributions.
+<!-- migrate-repo:banner -->
+
 # terraform-aws-mcaf-aurora
 
 Terraform module to create an AWS RDS Aurora cluster.
